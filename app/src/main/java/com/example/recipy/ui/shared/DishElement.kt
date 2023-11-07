@@ -1,5 +1,6 @@
 package com.example.recipy.ui.shared
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -33,9 +35,11 @@ import com.example.recipy.ui.theme.RecipyTheme
 @Composable
 fun DishElement(modifier: Modifier = Modifier){
     Card(
-        modifier = modifier
-            .width(244.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        modifier = modifier.width(244.dp),
+        border = BorderStroke(1.dp, colorResource(id = R.color.light_gray)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
     ) {
         Column {
             Image(
