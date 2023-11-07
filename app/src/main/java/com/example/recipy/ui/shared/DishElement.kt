@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.recipy.R
-import com.example.recipy.RecipyTheme
+import com.example.recipy.ui.theme.RecipyTheme
 
 @Composable
 fun DishElement(dish: Dish, modifier: Modifier = Modifier){

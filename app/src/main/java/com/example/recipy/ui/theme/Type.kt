@@ -14,18 +14,18 @@ val Roboto = FontFamily(
 )
 
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
     titleMedium = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 19.sp,
+        letterSpacing = 0.sp,
+    ),
+    titleLarge = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Medium,
+        fontSize = 40.sp,
+        lineHeight = 44.sp,
         letterSpacing = 0.sp,
     ),
 )
