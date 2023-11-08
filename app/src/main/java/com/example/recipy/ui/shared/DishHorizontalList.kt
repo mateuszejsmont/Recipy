@@ -1,35 +1,52 @@
 package com.example.recipy.ui.shared
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.recipy.R
 import com.example.recipy.ui.theme.RecipyTheme
 
 @Composable
-fun DishHorizontalList(dishes: List<Dish>, modifier: Modifier = Modifier){
-    Column (modifier = modifier) {
+fun DishHorizontalList(
+    name: String,
+    dishes: List<Dish>,
+    onDishClick: (Dish) -> Unit,
+    onDishActionButtonClick: (Dish) -> Unit,
+    modifier: Modifier = Modifier,
+    dishActionButtonIcon: ImageVector = Icons.Default.FavoriteBorder,
+){
+    Column (
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
         Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "CHICKEN",
+            modifier = Modifier.padding(horizontal = 17.dp),
+            text = name,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        LazyRow {
+        LazyRow (
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 15.dp)
+        ) {
             items(dishes) { dish ->
                 DishElement(
                     dish = dish,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    onClick = { onDishClick(dish) },
+                    onActionButtonClick = { onDishActionButtonClick(dish) },
+                    actionButtonIcon = dishActionButtonIcon,
                 )
             }
         }
@@ -59,6 +76,11 @@ fun DishHorizontalListPreview(){
     )
 
     RecipyTheme {
-        DishHorizontalList(dummyDishes)
+        DishHorizontalList(
+            "CHICKEN",
+            dummyDishes,
+            onDishClick = {},
+            onDishActionButtonClick = {}
+        )
     }
 }
