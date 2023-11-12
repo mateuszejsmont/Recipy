@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -89,6 +90,7 @@ fun FavouriteScreen(modifier: Modifier = Modifier){
                         name = "CHICKEN",
                         onDishClick = {},
                         onDishActionButtonClick = {},
+                        dishActionButtonIcon = Icons.Filled.Favorite
                     )
                 }
             }
@@ -114,36 +116,11 @@ fun FavouriteScreenTopBar(modifier: Modifier = Modifier){
                 tint = Color(0xFF061B54)
             )
         }
-//        Spacer(Modifier.weight(1f))
         Text(
             stringResource(R.string.favourites),
             style = MaterialTheme.typography.titleLarge
         )
     }
-//    CenterAlignedTopAppBar(
-//        modifier = modifier,
-//        title = { Text(
-//            stringResource(R.string.explore),
-//            style = MaterialTheme.typography.titleLarge
-//        ) },
-//        actions = {
-//            TopBarActionButton(
-//                Icons.Default.FavoriteBorder,
-//                modifier = Modifier
-//                    .height(48.dp)
-//                    .width(48.dp),
-//                onClick = {}
-//            )
-//            Spacer(modifier = Modifier.width(10.dp))
-//            TopBarActionButton(
-//                Icons.Default.ShoppingCart,
-//                modifier = Modifier
-//                    .height(48.dp)
-//                    .width(48.dp),
-//                onClick = {}
-//            )
-//        }
-//    )
 }
 
 @Composable

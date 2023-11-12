@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.Divider
@@ -114,6 +115,7 @@ fun ShoppingScreen(modifier: Modifier = Modifier) {
                 onDishClick = {},
                 onDishActionButtonClick = {},
                 name = stringResource(R.string.meals),
+                dishActionButtonIcon = Icons.Default.Clear
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
