@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Recipy</string>
     <string name="explore">Explore</string>
+    <string name="favourites">Favourites</string>
+    <string name="shopping">Shopping</string>
+    <string name="meals">MEALS</string>
 </resources>
