@@ -1,5 +1,8 @@
 package com.example.recipy.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,12 +12,19 @@ data class MealList(
     val content: List<Meal>
 )
 
+@Entity(tableName = "favourite_meals")
 @Serializable
 data class Meal (
+    @PrimaryKey
     @SerialName("idMeal")
     val id: String,
+    @ColumnInfo(name = "meal_name")
     @SerialName("strMeal")
     val name: String,
+    @ColumnInfo(name = "url")
     @SerialName("strMealThumb")
     val thumbUrl: String,
+
+    @ColumnInfo(name = "is_favourite")
+    val isFavourite: Boolean? = false
 )
