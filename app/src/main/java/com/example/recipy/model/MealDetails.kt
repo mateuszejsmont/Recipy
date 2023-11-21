@@ -12,7 +12,7 @@ data class MealDetailsList(
     val content: List<MealDetails>
 )
 
-@Entity(tableName = "shopping_meals")
+@Entity(tableName = "meal_details") // stores meal details added to shopping list
 @Serializable
 data class MealDetails(
     @PrimaryKey

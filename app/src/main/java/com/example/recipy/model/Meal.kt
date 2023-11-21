@@ -12,7 +12,7 @@ data class MealList(
     val content: List<Meal>
 )
 
-@Entity(tableName = "favourite_meals")
+@Entity(tableName = "meals") //stores meals added to favourite
 @Serializable
 data class Meal (
     @PrimaryKey

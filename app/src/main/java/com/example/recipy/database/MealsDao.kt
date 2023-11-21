@@ -1,4 +1,4 @@
-package com.example.recipy.database.favourites
+package com.example.recipy.database
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -8,7 +8,7 @@ import com.example.recipy.model.Meal
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FavouritesDao {
+interface MealsDao {
 
     @Insert
     suspend fun addFavourite(favourites: Meal)
@@ -16,6 +16,7 @@ interface FavouritesDao {
     @Delete
     suspend fun deleteFavourite(favourites: Meal)
 
-    @Query("SELECT * FROM favourite_meals ORDER BY meal_name ASC")
+    @Query("SELECT * FROM meals ORDER BY meal_name ASC")
     fun getFavourites(): Flow<List<Meal>>
+
 }
