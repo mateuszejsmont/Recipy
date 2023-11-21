@@ -22,21 +22,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.recipy.R
+import com.example.recipy.model.Meal
 import com.example.recipy.ui.theme.RecipyTheme
 
 @Composable
-fun DishElement(
-    dish: Dish,
+fun MealElement(
+    meal: Meal,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onActionButtonClick: () -> Unit,
     actionButtonIcon: ImageVector = Icons.Default.FavoriteBorder,
-){
+) {
     Card(
         modifier = modifier
             .width(244.dp)
@@ -44,15 +48,28 @@ fun DishElement(
         border = BorderStroke(1.dp, colorResource(id = R.color.light_gray)),
     ) {
         Column {
-            Image(
-                painter = painterResource(id = dish.imageResourceId),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(133.dp)
-            )
-            Row (
+            // TODO: image displaying
+            if (meal.thumbUrl == "") {
+                Image(
+                    painter = painterResource(id = R.drawable.dummy_dish_1),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(133.dp)
+                )
+            } else {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(meal.thumbUrl)
+                        .crossfade(true).build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(133.dp)
+                )
+            }
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp)
@@ -60,8 +77,10 @@ fun DishElement(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    modifier = Modifier.weight(1f).padding(horizontal = 10.dp),
-                    text = dish.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 10.dp),
+                    text = meal.name,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 IconButton(onClick = onActionButtonClick) {
@@ -89,19 +108,16 @@ fun DishElement(
 
 @Preview
 @Composable
-fun DishElementPreview(){
+fun DishElementPreview() {
     RecipyTheme {
-        DishElement(dish = Dish(
-            name = "Teriyaki Chicken Caserolle",
-            imageResourceId = R.drawable.dummy_dish_1),
+        MealElement(
+            meal = Meal(
+                id = "1",
+                name = "Teriyaki Chicken Caserolle",
+                thumbUrl = ""
+            ),
             onClick = {},
             onActionButtonClick = {},
         )
     }
 }
-
-/* TODO: Move this data class to View Model */
-data class Dish(
-    val name: String,
-    @DrawableRes val imageResourceId: Int,
-)

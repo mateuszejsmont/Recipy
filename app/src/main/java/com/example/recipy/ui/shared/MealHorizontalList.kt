@@ -16,16 +16,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.recipy.R
+import com.example.recipy.model.Meal
 import com.example.recipy.ui.theme.RecipyTheme
 
 @Composable
-fun DishHorizontalList(
+fun MealHorizontalList(
     name: String,
-    dishes: List<Dish>,
-    onDishClick: (Dish) -> Unit,
-    onDishActionButtonClick: (Dish) -> Unit,
+    meals: List<Meal>,
+    onMealClick: (String) -> Unit,
+    onMealActionButtonClick: (Meal) -> Unit,
     modifier: Modifier = Modifier,
-    dishActionButtonIcon: ImageVector = Icons.Default.FavoriteBorder,
+    mealActionButtonIcon: ImageVector = Icons.Default.FavoriteBorder,
 ){
     Column (
         modifier = modifier,
@@ -41,12 +42,12 @@ fun DishHorizontalList(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(horizontal = 15.dp)
         ) {
-            items(dishes) { dish ->
-                DishElement(
-                    dish = dish,
-                    onClick = { onDishClick(dish) },
-                    onActionButtonClick = { onDishActionButtonClick(dish) },
-                    actionButtonIcon = dishActionButtonIcon,
+            items(meals) { meal ->
+                MealElement(
+                    meal = meal,
+                    onClick = { onMealClick(meal.id) },
+                    onActionButtonClick = { onMealActionButtonClick(meal) },
+                    actionButtonIcon = mealActionButtonIcon,
                 )
             }
         }
@@ -55,32 +56,36 @@ fun DishHorizontalList(
 
 @Preview(showBackground = true)
 @Composable
-fun DishHorizontalListPreview(){
-    val dummyDishes = listOf(
-        Dish(
+fun MealHorizontalListPreview(){
+    val dummyMeals = listOf(
+        Meal(
+            id = "1",
             name = "Teriyaki Chicken Caserolle",
-            imageResourceId = R.drawable.dummy_dish_1
+            thumbUrl = ""
         ),
-        Dish(
+        Meal(
+            id = "1",
             name = "Polish Pancakes",
-            imageResourceId = R.drawable.dummy_dish_2
+            thumbUrl = ""
         ),
-        Dish(
+        Meal(
+            id = "1",
             name = "Beetroot Soup",
-            imageResourceId = R.drawable.dummy_dish_3
+            thumbUrl = ""
         ),
-        Dish(
+        Meal(
+            id = "1",
             name = "Sweet Potato Fries",
-            imageResourceId = R.drawable.dummy_dish_4
+            thumbUrl = ""
         ),
     )
 
     RecipyTheme {
-        DishHorizontalList(
+        MealHorizontalList(
             "CHICKEN",
-            dummyDishes,
-            onDishClick = {},
-            onDishActionButtonClick = {}
+            dummyMeals,
+            onMealClick = {},
+            onMealActionButtonClick = {}
         )
     }
 }

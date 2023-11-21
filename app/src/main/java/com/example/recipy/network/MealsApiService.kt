@@ -10,14 +10,6 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-private const val BASE_URL = "https://themealdb.com/api/json/v1/1/"
-
-private val json = Json { ignoreUnknownKeys = true }
-private val retrofit = Retrofit.Builder()
-    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-    .baseUrl(BASE_URL)
-    .build()
-
 interface MealsApiService{
     @GET("lookup.php")
     suspend fun getMealWithId(@Query("i") mealId: String): MealDetailsList
@@ -28,10 +20,3 @@ interface MealsApiService{
     @GET("list.php?c=list")
     suspend fun getAllMealCategories(): MealCategoriesList
 }
-
-object MealsApi{
-    val retrofitServices: MealsApiService by lazy {
-        retrofit.create(MealsApiService::class.java)
-    }
-}
-
