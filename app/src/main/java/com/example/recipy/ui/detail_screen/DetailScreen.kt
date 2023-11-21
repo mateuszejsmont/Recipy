@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,27 +31,78 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.recipy.R
+import com.example.recipy.data.AppContainer
+import com.example.recipy.data.DefaultAppContainer
+import com.example.recipy.model.Meal
+import com.example.recipy.model.MealDetails
+import com.example.recipy.network.MealsApiService
+import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.theme.RecipyTheme
+import com.example.recipy.ui.view_model.AppViewModelProvider
+import com.example.recipy.ui.view_model.DetailUiState
+import com.example.recipy.ui.view_model.MealDetailsViewModel
+import kotlinx.serialization.SerialName
+
+object MealDetailsDestination : NavigationDestination {
+    override val route = "meal_detail"
+    const val mealIdArg = "mealId"
+    val routeWithArgs = "$route/{$mealIdArg}"
+}
 
 
+@Composable
+fun DetailScreen(
+    onAddFavourite: (String) -> Unit,
+    onAddToCart: (String) -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MealDetailsViewModel = viewModel(
+        factory = AppViewModelProvider.Factory
+    )
+) {
+    when (val uiState = viewModel.detailUiState) {
+        is DetailUiState.Error -> LoadingScreen(modifier = modifier)
+        is DetailUiState.Loading -> LoadingScreen(modifier = modifier)
+        is DetailUiState.Success -> DetailBody(
+            mealDetails = uiState.mealDetails,
+            onAddFavourite = onAddFavourite,
+            onAddToCart = onAddToCart,
+            onBackClick = onBackClick,
+            modifier = modifier
+        )
+
+    }
+}
+
+// TODO try making status bar transparent or adjust sheetPeekHeight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen() {
+fun DetailBody(
+    mealDetails: MealDetails,
+    onAddFavourite: (String) -> Unit,
+    onAddToCart: (String) -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val sheetCornerRadius = 32.dp
     val configuration = LocalConfiguration.current
     val sheetPeekHeight =
         configuration.screenHeightDp.dp - configuration.screenWidthDp.dp + sheetCornerRadius
-    val image = painterResource(id = R.drawable.dummy_dish_1_original)
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             skipHiddenState = true
@@ -71,145 +124,214 @@ fun DetailScreen() {
         },
         sheetPeekHeight = sheetPeekHeight,
         sheetContent = {
-            SheetContent(modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp))
+            SheetContent(
+                mealDetails = mealDetails,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)
+            )
         },
+        modifier = modifier
     ) {
-        Image(
+        AsyncImage(
             modifier = Modifier.fillMaxWidth(),
-            painter = image,
+            model = ImageRequest.Builder(LocalContext.current).data(mealDetails.thumbUrl)
+                .crossfade(true).build(),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillWidth
         )
-        Row(
+        // for preview
+        //Image(contentScale = ContentScale.FillWidth, painter = painterResource(id = R.drawable.dummy_dish_1_original), contentDescription = null, modifier = Modifier.fillMaxWidth())
+        TopButtons(
+            onAddFavourite = { onAddFavourite(mealDetails.id) },
+            onAddToCart = { onAddToCart(mealDetails.id) },
+            onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 16.dp)
-        ) {
-            IconButton(
-                onClick = { /*TODO*/ },
-                colors = IconButtonDefaults.iconButtonColors(Color.White),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = Color(0xFF061B54)
-                )
-            }
-            Spacer(Modifier.weight(1f))
-
-            IconButton(
-                onClick = { /*TODO*/ },
-                colors = IconButtonDefaults.iconButtonColors(Color.White),
-                modifier = Modifier.padding(end=8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = null,
-                    tint = Color(0xFF061B54)
-                )
-            }
-
-            IconButton(
-                onClick = { /*TODO*/ },
-                colors = IconButtonDefaults.iconButtonColors(Color.White)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = Color(0xFF061B54)
-                )
-            }
-        }
-
+        )
     }
-
 }
 
 @Composable
-fun SheetContent(modifier: Modifier = Modifier) {
-    val mealName = "Teriyaki Chicken Casserole"
-    val strInstructions =
-        "Preheat oven to 350° F. Spray a 9x13-inch baking pan with non-stick spray.\r\nCombine soy sauce, ½ cup water, brown sugar, ginger and garlic in a small saucepan and cover. Bring to a boil over medium heat. Remove lid and cook for one minute once boiling.\r\nMeanwhile, stir together the corn starch and 2 tablespoons of water in a separate dish until smooth. Once sauce is boiling, add mixture to the saucepan and stir to combine. Cook until the sauce starts to thicken then remove from heat.\r\nPlace the chicken breasts in the prepared pan. Pour one cup of the sauce over top of chicken. Place chicken in oven and bake 35 minutes or until cooked through. Remove from oven and shred chicken in the dish using two forks.\r\n*Meanwhile, steam or cook the vegetables according to package directions.\r\nAdd the cooked vegetables and rice to the casserole dish with the chicken. Add most of the remaining sauce, reserving a bit to drizzle over the top when serving. Gently toss everything together in the casserole dish until combined. Return to oven and cook 15 minutes. Remove from oven and let stand 5 minutes before serving. Drizzle each serving with remaining sauce. Enjoy!"
-    val ingredients = arrayOf(
-        "soy sauce",
-        "water",
-        "brown sugar",
-        "ground ginger",
-        "minced garlic",
-        "cornstarch",
-        "chicken breasts",
-        "stir-fry vegetablesas dupa cycki i wagiina na rurze sie wygina",
-        "brown rice",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        null,
-        null,
-        null,
-        null,
-        null
-    )
-    val measures = arrayOf(
-        "3/4 cup",
-        "1/2 cup",
-        "1/4 cup",
-        "1/2 teaspoon",
-        "1/2 teaspoon",
-        "4 Tablespoons",
-        "2",
-        "4 pounded to 1cm thickness",
-        "3 cups",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        null,
-        null,
-        null,
-        null,
-        null,
-    )
-
+fun SheetContent(mealDetails: MealDetails, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize() //makes the sheet extendable to full screen
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = mealName, style = MaterialTheme.typography.headlineMedium)
+        Text(text = mealDetails.name, style = MaterialTheme.typography.headlineMedium)
         Divider(color = Color(0xFFD0DBEA))
         Text(text = "INSTRUCTIONS", style = MaterialTheme.typography.titleMedium)
-        Text(text = strInstructions, style = MaterialTheme.typography.bodySmall)
+        Text(text = mealDetails.instructions, style = MaterialTheme.typography.bodySmall)
         Divider(color = Color(0xFFD0DBEA))
         Text(text = "INGREDIENTS", style = MaterialTheme.typography.titleMedium)
 
-        for (pair in ingredients.zip(measures)) {
+        for (pair in mealDetails.getIngredients().zip(mealDetails.getMeasures())) {
             if (pair.first == null || pair.second == null || pair.first == "" || pair.second == "") {
                 continue
             }
+            IngredientWithMeasure(
+                ingredient = pair.first!!,
+                measure = pair.second!!,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = pair.first!!, style = MaterialTheme.typography.bodySmall,modifier = Modifier.weight(3f))
-                Text(text = pair.second!!, style = MaterialTheme.typography.bodySmall, textAlign= TextAlign.End,modifier = Modifier.weight(1f))
-            }
+@Composable
+private fun TopButtons(
+    onAddFavourite: () -> Unit,
+    onAddToCart: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+    ) {
+        IconButton(
+            onClick = onBackClick,
+            colors = IconButtonDefaults.iconButtonColors(Color.White),
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Go back",
+                tint = Color(0xFF061B54)
+            )
+        }
+        Spacer(Modifier.weight(1f))
+
+        IconButton(
+            onClick = onAddFavourite,
+            colors = IconButtonDefaults.iconButtonColors(Color.White),
+            modifier = Modifier.padding(end = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = "Add to favourites",
+                tint = Color(0xFF061B54)
+            )
         }
 
+        IconButton(
+            onClick = onAddToCart,
+            colors = IconButtonDefaults.iconButtonColors(Color.White)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Add to shopping list",
+                tint = Color(0xFF061B54)
+            )
+        }
+    }
+}
 
+@Composable
+private fun IngredientWithMeasure(ingredient: String, measure: String, modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = ingredient,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.weight(3f)
+        )
+        Text(
+            text = measure,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun LoadingScreen(modifier: Modifier = Modifier) {
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(id = R.drawable.dummy_dish_2),
+        contentDescription = "Loading"
+    )
+}
+
+@Composable
+private fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.dummy_dish_3),
+            contentDescription = "Error"
+        )
+        Text(text = "ERROR!!!")
+        Button(onClick = retryAction) {
+            Text(text = "Retry")
+        }
     }
 }
 
 @Composable
 @Preview(showBackground = true)
 fun DetailScreenPreview() {
+    val mealDetails = MealDetails(
+        id = "52804",
+        name = "Poutine",
+        drinkAlternate = null,
+        category = "Miscellaneous",
+        area = "Canadian",
+        instructions = "Heat oil in a deep fryer or deep heavy skillet to 365°F (185°C).\r\nWarm gravy in saucepan or microwave.\r\nPlace the fries into the hot oil, and cook until light brown, about 5 minutes.\r\nRemove to a paper towel lined plate to drain.\r\nPlace the fries on a serving platter, and sprinkle the cheese over them.\r\nLadle gravy over the fries and cheese, and serve immediately.",
+        thumbUrl = "https://www.themealdb.com/images/media/meals/uuyrrx1487327597.jpg",
+        tags = "UnHealthy,Speciality,HangoverFood",
+        youtubeUrl = "https://www.youtube.com/watch?v=UVAMAoA2_WU",
+        ingredient1 = "Vegetable Oil",
+        ingredient2 = "Vegetable Oil",
+        ingredient3 = "Vegetable Oil",
+        ingredient4 = "Vegetable Oil",
+        ingredient5 = "Vegetable Oil",
+        ingredient6 = "Vegetable Oil",
+        ingredient7 = "Vegetable Oil",
+        ingredient8 = "Vegetable Oil",
+        ingredient9 = "",
+        ingredient10 = "",
+        ingredient11 = "",
+        ingredient12 = "",
+        ingredient13 = "",
+        ingredient14 = "",
+        ingredient15 = "",
+        ingredient16 = "",
+        ingredient17 = "",
+        ingredient18 = "",
+        ingredient19 = "",
+        ingredient20 = "",
+        measure1 = "Dash",
+        measure2 = "Dash",
+        measure3 = "Dash",
+        measure4 = "Dash",
+        measure5 = "Dash",
+        measure6 = "Dash",
+        measure7 = "Dash",
+        measure8 = "Dash",
+        measure9 = "",
+        measure10 = "",
+        measure11 = "",
+        measure12 = "",
+        measure13 = "",
+        measure14 = "",
+        measure15 = "",
+        measure16 = "",
+        measure17 = "",
+        measure18 = "",
+        measure19 = "",
+        measure20 = "",
+    )
     RecipyTheme {
-        DetailScreen()
+        DetailBody(
+            mealDetails = mealDetails,
+            onAddFavourite = {},
+            onAddToCart = {},
+            onBackClick = {})
     }
 }
