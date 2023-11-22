@@ -123,7 +123,7 @@ fun ShoppingScreen(
                 onMealClick = onMealClick,
                 onMealActionButtonClick = {},
                 name = stringResource(R.string.meals),
-                mealActionButtonIcon = Icons.Default.Clear
+                mealActionButtonIcon = {Icons.Default.Clear}
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),

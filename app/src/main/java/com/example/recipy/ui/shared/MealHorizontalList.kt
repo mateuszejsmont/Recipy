@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.recipy.R
 import com.example.recipy.model.Meal
 import com.example.recipy.ui.theme.RecipyTheme
 
@@ -25,8 +24,8 @@ fun MealHorizontalList(
     meals: List<Meal>,
     onMealClick: (String) -> Unit,
     onMealActionButtonClick: (Meal) -> Unit,
+    mealActionButtonIcon: (Meal) -> ImageVector,
     modifier: Modifier = Modifier,
-    mealActionButtonIcon: ImageVector = Icons.Default.FavoriteBorder,
 ){
     Column (
         modifier = modifier,
@@ -47,7 +46,7 @@ fun MealHorizontalList(
                     meal = meal,
                     onClick = { onMealClick(meal.id) },
                     onActionButtonClick = { onMealActionButtonClick(meal) },
-                    actionButtonIcon = mealActionButtonIcon,
+                    actionButtonIcon = mealActionButtonIcon(meal),
                 )
             }
         }
@@ -84,8 +83,9 @@ fun MealHorizontalListPreview(){
         MealHorizontalList(
             "CHICKEN",
             dummyMeals,
+            mealActionButtonIcon = { Icons.Default.FavoriteBorder},
             onMealClick = {},
-            onMealActionButtonClick = {}
+            onMealActionButtonClick = {},
         )
     }
 }

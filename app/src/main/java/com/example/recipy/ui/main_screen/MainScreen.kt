@@ -16,9 +16,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,10 +30,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -45,9 +48,8 @@ import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
 import com.example.recipy.model.Meal
 import com.example.recipy.ui.navigation.NavigationDestination
-import com.example.recipy.ui.view_model.AppViewModelProvider
-import com.example.recipy.ui.view_model.MainUiState
-import com.example.recipy.ui.view_model.MainViewModel
+import com.example.recipy.AppViewModelProvider
+import kotlinx.coroutines.launch
 
 val dummyMeals = listOf(
     Meal(
@@ -88,7 +90,6 @@ object MainDestination : NavigationDestination {
     override val route = "main"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     onMealClick: (String) -> Unit,
@@ -113,18 +114,30 @@ fun MainScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
             )
-
             is MainUiState.Loading -> LoadingScreen(
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             )
+            is MainUiState.Success -> {
+                val coroutineScope = rememberCoroutineScope()
+                val favouriteMeals = uiState.favouriteMeals.collectAsState()
 
-            is MainUiState.Success -> MainBody(
-                mealsInCategories = uiState.mealsInCategories,
-                onMealClick = onMealClick,
-                modifier = Modifier.padding(innerPadding)
-            )
+                MainBody(
+                    mealsInCategories = uiState.mealsInCategories,
+                    favouriteMeals = favouriteMeals.value,
+                    onMealClick = onMealClick,
+                    onMealFavouriteClick = { meal ->
+                        coroutineScope.launch {
+                            viewModel.switchInFavourites(
+                                value = !favouriteMeals.value.contains(meal),
+                                meal = meal
+                            )
+                        }
+                    },
+                    modifier = Modifier.padding(innerPadding),
+                )
+            }
         }
     }
 }
@@ -132,7 +145,9 @@ fun MainScreen(
 @Composable
 private fun MainBody(
     mealsInCategories: Map<String, List<Meal>>,
+    favouriteMeals: List<Meal>,
     onMealClick: (String) -> Unit,
+    onMealFavouriteClick: (Meal) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -150,10 +165,13 @@ private fun MainBody(
             items(mealsInCategories.keys.toList()) { category ->
                 MealHorizontalList(
                     meals = mealsInCategories[category]!!,
-                    //meals = dummyMeals,
                     name = category,
                     onMealClick = onMealClick,
-                    onMealActionButtonClick = {},
+                    mealActionButtonIcon = {
+                        if (favouriteMeals.contains(it)) Icons.Filled.Favorite
+                        else Icons.Outlined.FavoriteBorder
+                    },
+                    onMealActionButtonClick = { onMealFavouriteClick(it) },
                 )
             }
         }

@@ -169,6 +169,10 @@ data class MealDetails(
     @ColumnInfo("is_on_buy_list")
     val isOnBuyList: Boolean? = false
 ) {
+    fun toMeal(): Meal {
+        return Meal(id, name, thumbUrl, isFavourite)
+    }
+
     fun getIngredients(): List<String?> {
         return listOf(
             ingredient1,
