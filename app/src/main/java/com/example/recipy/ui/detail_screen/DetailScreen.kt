@@ -54,9 +54,7 @@ import com.example.recipy.R
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.theme.RecipyTheme
-import com.example.recipy.ui.view_model.AppViewModelProvider
-import com.example.recipy.ui.view_model.DetailUiState
-import com.example.recipy.ui.view_model.MealDetailsViewModel
+import com.example.recipy.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 object MealDetailsDestination : NavigationDestination {

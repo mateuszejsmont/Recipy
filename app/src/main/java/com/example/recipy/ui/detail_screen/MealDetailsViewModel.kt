@@ -1,4 +1,4 @@
-package com.example.recipy.ui.view_model
+package com.example.recipy.ui.detail_screen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.recipy.data.MealsRepository
 import com.example.recipy.database.OfflineMealsRepository
 import com.example.recipy.model.MealDetails
-import com.example.recipy.ui.detail_screen.MealDetailsDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

@@ -87,7 +87,7 @@ fun FavouriteScreen(
                         name = "CHICKEN",
                         onMealClick = onMealClick,
                         onMealActionButtonClick = {},
-                        mealActionButtonIcon = Icons.Filled.Favorite
+                        mealActionButtonIcon = { Icons.Filled.Favorite }
                     )
                 }
             }
