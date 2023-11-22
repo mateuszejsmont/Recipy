@@ -44,15 +44,13 @@ fun RecipyNavHost(
                 }
             )
         }
-        composable(route = MealDetailsDestination.routeWithArgs,
+        composable(
+            route = MealDetailsDestination.routeWithArgs,
             arguments = listOf(navArgument(MealDetailsDestination.mealIdArg) {
                 type = NavType.StringType
-            }
-            )
+            })
         ) {
             DetailScreen(
-                onAddFavourite = {},
-                onAddToCart = {},
                 onBackClick = {
                     navController.navigateUp()
                 })

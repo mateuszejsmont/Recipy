@@ -10,18 +10,19 @@ import com.example.recipy.RecipyApplication
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            MainViewModel(recipyApplication().container.mealsRepository)
+            MainViewModel(recipyApplication().container.onlineMealsRepository)
         }
         initializer {
-            FavouriteViewModel(recipyApplication().container.mealsRepository)
+            FavouriteViewModel(recipyApplication().container.onlineMealsRepository)
         }
         initializer {
-            ShoppingViewModel(recipyApplication().container.mealsRepository)
+            ShoppingViewModel(recipyApplication().container.onlineMealsRepository)
         }
         initializer {
             MealDetailsViewModel(
                 this.createSavedStateHandle(),
-                recipyApplication().container.mealsRepository
+                recipyApplication().container.onlineMealsRepository,
+                recipyApplication().container.offlineMealsRepository,
             )
         }
     }

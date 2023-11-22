@@ -88,7 +88,6 @@ object MainDestination : NavigationDestination {
     override val route = "main"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     onMealClick: (String) -> Unit,

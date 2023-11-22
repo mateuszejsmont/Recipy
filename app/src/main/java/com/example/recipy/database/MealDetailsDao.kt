@@ -20,7 +20,7 @@ interface MealDetailsDao {
     fun getShoppingMeals(): Flow<List<MealDetails>>
 
     @Query("SELECT * FROM meal_details WHERE id = :id")
-    fun getMealWithId(id: String): MealDetails?
+    fun getShoppingMealWithId(id: String): Flow<MealDetails?>
 
     @Query("SELECT * FROM meal_details WHERE meal_name LIKE :searchPhrase")
     fun getMealsWithSearch(searchPhrase: String): Flow<List<MealDetails>>

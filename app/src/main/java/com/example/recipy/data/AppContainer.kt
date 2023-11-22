@@ -1,5 +1,8 @@
 package com.example.recipy.data
 
+import android.content.Context
+import com.example.recipy.database.AppDatabase
+import com.example.recipy.database.OfflineMealsRepository
 import com.example.recipy.network.MealsApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -7,9 +10,10 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
 interface AppContainer {
-    val mealsRepository : MealsRepository
+    val onlineMealsRepository : MealsRepository
+    val offlineMealsRepository: OfflineMealsRepository
 }
-class DefaultAppContainer : AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
     private val baseUrl = "https://themealdb.com/api/json/v1/1/"
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -22,7 +26,14 @@ class DefaultAppContainer : AppContainer {
         retrofit.create(MealsApiService::class.java)
     }
 
-    override val mealsRepository: MealsRepository by lazy {
+    override val onlineMealsRepository: MealsRepository by lazy {
         NetworkMealsRepository(retrofitService)
+    }
+
+    override val offlineMealsRepository: OfflineMealsRepository by lazy {
+        OfflineMealsRepository(
+            AppDatabase.getDatabase(context).favouritesDao(),
+            AppDatabase.getDatabase(context).shoppingDao()
+        )
     }
 }
