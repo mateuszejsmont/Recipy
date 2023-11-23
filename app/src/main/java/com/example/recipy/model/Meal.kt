@@ -23,8 +23,5 @@ data class Meal (
     val name: String,
     @ColumnInfo(name = "url")
     @SerialName("strMealThumb")
-    val thumbUrl: String,
-
-    @ColumnInfo(name = "is_favourite")
-    val isFavourite: Boolean? = false
+    var thumbUrl: String
 )

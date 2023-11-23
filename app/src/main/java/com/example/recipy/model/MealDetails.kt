@@ -36,7 +36,7 @@ data class MealDetails(
     val instructions: String,
     @ColumnInfo(name = "url")
     @SerialName("strMealThumb")
-    val thumbUrl: String,
+    var thumbUrl: String,
     @ColumnInfo(name = "tags")
     @SerialName("strTags")
     val tags: String?,
@@ -162,15 +162,10 @@ data class MealDetails(
     val measure19: String?,
     @ColumnInfo("measure20")
     @SerialName("strMeasure20")
-    val measure20: String?,
-
-    @ColumnInfo("is_favourite")
-    val isFavourite: Boolean? = false,
-    @ColumnInfo("is_on_buy_list")
-    val isOnBuyList: Boolean? = false
+    val measure20: String?
 ) {
     fun toMeal(): Meal {
-        return Meal(id, name, thumbUrl, isFavourite)
+        return Meal(id, name, thumbUrl)
     }
 
     fun getIngredients(): List<String?> {
