@@ -27,4 +27,8 @@ data class Meal (
 
     @ColumnInfo(name = "is_favourite")
     val isFavourite: Boolean? = false
-)
+) {
+    fun matchesQuery(query: String) : Boolean {
+        return name.lowercase().contains(query)
+    }
+}

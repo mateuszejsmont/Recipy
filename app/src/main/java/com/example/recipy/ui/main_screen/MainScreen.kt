@@ -1,6 +1,9 @@
 package com.example.recipy.ui.main_screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,7 +18,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
@@ -34,10 +39,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -114,18 +131,23 @@ fun MainScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
             )
+
             is MainUiState.Loading -> LoadingScreen(
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             )
+
             is MainUiState.Success -> {
                 val coroutineScope = rememberCoroutineScope()
+                val mealsInCategories = uiState.mealsInCategories.collectAsState()
                 val favouriteMeals = uiState.favouriteMeals.collectAsState()
+                val searchText = uiState.searchText.collectAsState()
 
                 MainBody(
-                    mealsInCategories = uiState.mealsInCategories,
+                    mealsInCategories = mealsInCategories.value,
                     favouriteMeals = favouriteMeals.value,
+                    searchText = searchText.value,
                     onMealClick = onMealClick,
                     onMealFavouriteClick = { meal ->
                         coroutineScope.launch {
@@ -135,6 +157,7 @@ fun MainScreen(
                             )
                         }
                     },
+                    onSearchTextChange = viewModel::onSearchTextChange,
                     modifier = Modifier.padding(innerPadding),
                 )
             }
@@ -146,14 +169,19 @@ fun MainScreen(
 private fun MainBody(
     mealsInCategories: Map<String, List<Meal>>,
     favouriteMeals: List<Meal>,
+    searchText: String,
     onMealClick: (String) -> Unit,
     onMealFavouriteClick: (Meal) -> Unit,
+    onSearchTextChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     Column(
-        modifier = modifier
+        modifier = modifier.pointerInput(Unit) {detectTapGestures ( onTap =  {focusManager.clearFocus()})}
     ) {
         SearchBar(
+            searchText = searchText,
+            onSearchTextChange = onSearchTextChange,
             modifier = Modifier
                 .padding(horizontal = 13.dp, vertical = 8.dp)
                 .fillMaxWidth()
@@ -262,7 +290,12 @@ fun TopBarActionButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+fun SearchBar(
+    searchText: String = "",
+    onSearchTextChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = modifier,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -273,12 +306,24 @@ fun SearchBar(modifier: Modifier = Modifier) {
         leadingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = null)
         },
+        trailingIcon = {
+            if (searchText.isNotEmpty()) {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        onSearchTextChange("")
+                    })
+            }
+        },
         placeholder = {
             Text("search", color = MaterialTheme.colorScheme.secondary)
         },
         shape = RoundedCornerShape(100),
-        value = "",
-        onValueChange = {}
+        value = searchText,
+        onValueChange = onSearchTextChange,
+        singleLine = true,
+        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
     )
 }
 
