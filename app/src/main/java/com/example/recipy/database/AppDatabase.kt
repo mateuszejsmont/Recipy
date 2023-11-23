@@ -11,6 +11,7 @@ import com.example.recipy.model.MealDetails
 abstract class AppDatabase: RoomDatabase() {
     abstract fun favouritesDao(): MealsDao
     abstract fun shoppingDao(): MealDetailsDao
+    abstract fun ingredientDao(): IngredientDao
 
     companion object {
         @Volatile
