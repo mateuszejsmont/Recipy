@@ -168,6 +168,12 @@ data class MealDetails(
         return Meal(id, name, thumbUrl)
     }
 
+    fun getNonNullIngredientsWithMeasures(): List<Pair<String, String>>{
+        val ingredients = getIngredients().filterNotNull().filter {it != "" }
+        val measures = getMeasures().filterNotNull().filter {it != "" }
+        return ingredients.zip(measures)
+    }
+
     fun getIngredients(): List<String?> {
         return listOf(
             ingredient1,

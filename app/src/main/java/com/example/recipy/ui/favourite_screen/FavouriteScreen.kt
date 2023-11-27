@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -29,6 +31,9 @@ import com.example.recipy.model.Meal
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.recipy.AppViewModelProvider
+import kotlinx.coroutines.launch
 
 val dummyMeals = listOf(
     Meal(
@@ -68,8 +73,12 @@ object FavouriteDestination : NavigationDestination {
 fun FavouriteScreen(
     onMealClick: (String) -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: FavouriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState = viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier,
         topBar = { FavouriteScreenTopBar(onBackClick=onBackClick, modifier = Modifier.padding(horizontal = 8.dp)) }
@@ -81,12 +90,16 @@ fun FavouriteScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 contentPadding = PaddingValues(vertical = 12.dp)
             ) {
-                items(dummyLists) { meals ->
+                items(uiState.value.favouriteMeals.keys.toList()) { category ->
                     MealHorizontalList(
-                        meals = meals,
+                        meals = uiState.value.favouriteMeals[category]!!.map { it.toMeal() },
                         name = "CHICKEN",
                         onMealClick = onMealClick,
-                        onMealActionButtonClick = {},
+                        onMealActionButtonClick = { meal ->
+                            coroutineScope.launch {
+                                viewModel.removeFromFavourites(meal)
+                            }
+                        },
                         mealActionButtonIcon = { Icons.Filled.Favorite }
                     )
                 }
