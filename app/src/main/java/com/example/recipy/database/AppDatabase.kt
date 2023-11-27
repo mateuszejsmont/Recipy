@@ -10,7 +10,7 @@ import com.example.recipy.model.Ingredient
 import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 
-@Database(entities = [Meal::class, MealDetails::class, Ingredient::class], version = 1)
+@Database(entities = [Meal::class, MealDetails::class, Ingredient::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun favouritesDao(): MealsDao
