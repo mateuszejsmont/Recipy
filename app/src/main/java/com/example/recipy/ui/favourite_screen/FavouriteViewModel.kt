@@ -8,7 +8,6 @@ import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -23,6 +22,7 @@ class FavouriteViewModel(
     val uiState: StateFlow<FavouritesUiState> =
         offlineMealsRepository.getFavouritesStream()
             .map { meals ->
+                //TODO: favourite meals should be saved as MealDetails, not Meals, then this api call will no longer be needed
                 val details = meals.mapNotNull { onlineMealsRepository.getMealWithId(it.id) }
                 FavouritesUiState(favouriteMeals = details.groupBy{ it.category })
             }.stateIn(
