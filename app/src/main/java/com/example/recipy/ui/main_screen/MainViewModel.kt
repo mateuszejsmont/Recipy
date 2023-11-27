@@ -1,5 +1,6 @@
 package com.example.recipy.ui.main_screen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -71,10 +72,12 @@ class MainViewModel(
             mainUiState = MainUiState.Loading
             mainUiState = try {
                 val categories = onlineMealsRepository.getAllMealCategories()
+
                 for (category: MealCategory in categories) {
                     mealsInCategoriesCache[category.name] =
                         onlineMealsRepository.getMealsWithCategory(category.name)
                 }
+
                 MainUiState.Success(
                     mealsInCategories = mealsInCategories,
                     favouriteMeals = offlineMealsRepository.getFavouritesStream()

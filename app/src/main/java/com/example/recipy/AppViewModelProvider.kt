@@ -19,7 +19,10 @@ object AppViewModelProvider {
             )
         }
         initializer {
-            FavouriteViewModel(recipyApplication().container.onlineMealsRepository)
+            FavouriteViewModel(
+                recipyApplication().container.onlineMealsRepository,
+                recipyApplication().container.offlineMealsRepository,
+            )
         }
         initializer {
             ShoppingViewModel(recipyApplication().container.onlineMealsRepository)
