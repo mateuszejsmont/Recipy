@@ -162,16 +162,41 @@ data class MealDetails(
     val measure19: String?,
     @ColumnInfo("measure20")
     @SerialName("strMeasure20")
-    val measure20: String?
+    val measure20: String?,
+    var marked1: Boolean? = false,
+    var marked2: Boolean? = false,
+    var marked3: Boolean? = false,
+    var marked4: Boolean? = false,
+    var marked5: Boolean? = false,
+    var marked6: Boolean? = false,
+    var marked7: Boolean? = false,
+    var marked8: Boolean? = false,
+    var marked9: Boolean? = false,
+    var marked10: Boolean? = false,
+    var marked11: Boolean? = false,
+    var marked12: Boolean? = false,
+    var marked13: Boolean? = false,
+    var marked14: Boolean? = false,
+    var marked15: Boolean? = false,
+    var marked16: Boolean? = false,
+    var marked17: Boolean? = false,
+    var marked18: Boolean? = false,
+    var marked19: Boolean? = false,
+    var marked20: Boolean? = false,
+    @ColumnInfo("is_favourite")
+    var isFavourite: Boolean? = false,
+    @ColumnInfo("is_in_cart")
+    var isInCart: Boolean? = false
 ) {
     fun toMeal(): Meal {
         return Meal(id, name, thumbUrl)
     }
 
-    fun getNonNullIngredientsWithMeasures(): List<Pair<String, String>>{
-        val ingredients = getIngredients().filterNotNull().filter {it != "" }
-        val measures = getMeasures().filterNotNull().filter {it != "" }
-        return ingredients.zip(measures)
+    fun getNonNullIngredientsWithMeasures(): List<Pair<Pair<String, String>, Boolean>> {
+        val ingredients = getIngredients().filterNotNull().filter { it != "" }
+        val measures = getMeasures().filterNotNull().filter { it != "" }
+        val marked = getMarks().filterNotNull()
+        return ingredients.zip(measures).zip(marked)
     }
 
     fun getIngredients(): List<String?> {
@@ -222,5 +247,114 @@ data class MealDetails(
             measure19,
             measure20
         )
+    }
+
+    fun getMarks(): List<Boolean?> {
+        return listOf(
+            marked1,
+            marked2,
+            marked3,
+            marked4,
+            marked5,
+            marked6,
+            marked7,
+            marked8,
+            marked9,
+            marked10,
+            marked11,
+            marked12,
+            marked13,
+            marked14,
+            marked15,
+            marked16,
+            marked17,
+            marked18,
+            marked19,
+            marked20
+        )
+    }
+
+    fun mark(name: String, mark: Boolean): Boolean {
+        if (ingredient1 == name) {
+            marked1 = mark
+            return true
+        }
+        if (ingredient2 == name) {
+            marked2 = mark
+            return true
+        }
+        if (ingredient3 == name) {
+            marked3 = mark
+            return true
+        }
+        if (ingredient4 == name) {
+            marked4 = mark
+            return true
+        }
+        if (ingredient5 == name) {
+            marked5 = mark
+            return true
+        }
+        if (ingredient6 == name) {
+            marked6 = mark
+            return true
+        }
+        if (ingredient7 == name) {
+            marked7 = mark
+            return true
+        }
+        if (ingredient8 == name) {
+            marked8 = mark
+            return true
+        }
+        if (ingredient9 == name) {
+            marked9 = mark
+            return true
+        }
+        if (ingredient10 == name) {
+            marked10 = mark
+            return true
+        }
+        if (ingredient11 == name) {
+            marked11 = mark
+            return true
+        }
+        if (ingredient12 == name) {
+            marked12 = mark
+            return true
+        }
+        if (ingredient13 == name) {
+            marked13 = mark
+            return true
+        }
+        if (ingredient14 == name) {
+            marked14 = mark
+            return true
+        }
+        if (ingredient15 == name) {
+            marked15 = mark
+            return true
+        }
+        if (ingredient16 == name) {
+            marked16 = mark
+            return true
+        }
+        if (ingredient17 == name) {
+            marked17 = mark
+            return true
+        }
+        if (ingredient18 == name) {
+            marked18 = mark
+            return true
+        }
+        if (ingredient19 == name) {
+            marked19 = mark
+            return true
+        }
+        if (ingredient20 == name) {
+            marked20 = mark
+            return true
+        }
+        return false
     }
 }

@@ -4,18 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.example.recipy.model.Ingredient
-import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 
-@Database(entities = [Meal::class, MealDetails::class, Ingredient::class], version = 2)
-@TypeConverters(Converters::class)
+@Database(entities = [MealDetails::class], version = 3)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun favouritesDao(): MealsDao
     abstract fun shoppingDao(): MealDetailsDao
-    abstract fun ingredientDao(): IngredientDao
 
     companion object {
         @Volatile
@@ -24,24 +17,14 @@ abstract class AppDatabase: RoomDatabase() {
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                        context,
-                        AppDatabase::class.java,
-                        "app_database.db"
-                        ).build()
+                    context,
+                    AppDatabase::class.java,
+                    "app_database.db"
+                ).build()
                 INSTANCE = instance
 
                 instance
             }
         }
     }
-}
-
-
-class Converters {
-
-    @TypeConverter
-    fun listToJson(value: List<String>?) = value?.joinToString(separator = "~~~~")
-
-    @TypeConverter
-    fun jsonToList(value: String) = value.split("~~~~")
 }

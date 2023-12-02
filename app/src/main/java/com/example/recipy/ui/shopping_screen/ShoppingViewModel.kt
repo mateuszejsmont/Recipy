@@ -36,6 +36,10 @@ class ShoppingViewModel(
         offlineMealsRepository.removeFromCart(meal.id)
     }
 
+    suspend fun switchInMarking(value: Boolean, name: String, mealsInCart: List<MealDetails>){
+        mealsInCart.forEach { if(it.mark(name, value)) { offlineMealsRepository.addToCart(it) } }
+    }
+
     companion object{
         private const val TIMEOUT_MILLIS = 5_000L
     }
