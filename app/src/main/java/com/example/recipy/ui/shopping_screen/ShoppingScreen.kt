@@ -163,7 +163,16 @@ fun ShoppingScreen(
                     checked = ingredient.third,
                     name = ingredient.first,
                     value = ingredient.second,
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp),
+                    onIngredientButtonClick = { name, checked ->
+                        coroutineScope.launch {
+                            viewModel.switchInMarking(
+                                value = checked,
+                                name = name,
+                                mealsInCart = uiState.value.mealsInCart
+                            )
+                        }
+                    }
                 )
             }
         }
@@ -201,7 +210,8 @@ fun IngredientRow(
     checked: Boolean,
     name: String,
     value: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onIngredientButtonClick: (String, Boolean) -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -209,7 +219,7 @@ fun IngredientRow(
         modifier = modifier,
     ) {
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = { onIngredientButtonClick(name, !checked) },
             colors = IconButtonDefaults.iconButtonColors(Color.White)
         ) {
             if (checked) {

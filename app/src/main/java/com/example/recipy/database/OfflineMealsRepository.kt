@@ -1,7 +1,6 @@
 package com.example.recipy.database
 
 import com.example.recipy.data.MealsRepository
-import com.example.recipy.model.Ingredient
 import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 import kotlinx.coroutines.flow.Flow
@@ -10,16 +9,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class OfflineMealsRepository(
-    private val favouritesDao: MealsDao,
     private val shoppingDao: MealDetailsDao,
-    private val ingredientDao: IngredientDao,
     private val network: MealsRepository
 ) {
     fun getFavouritesStream(): Flow<List<Meal>> = shoppingDao.getShoppingMeals().map {list -> list.filter {it.isFavourite == true}.map { it.toMeal() }}
 
     fun getFavouriteItemStream(id: String): Flow<Meal?> = shoppingDao.getShoppingMealWithId(id).filter {it?.isFavourite == true}.map { it?.toMeal() }
-
-    fun getShoppingIngredientsStream(): Flow<List<Ingredient>> = ingredientDao.getIngredientsShoppingList()
 
     fun getCartStream(): Flow<List<MealDetails>> = shoppingDao.getShoppingMeals().map {list -> list.filter { it.isInCart == true }}
 
@@ -62,10 +57,5 @@ class OfflineMealsRepository(
         if (meal != null)
             shoppingDao.deleteShoppingMeal(meal)
     }
-
-
-    suspend fun upsertIngredient(ingredient: Ingredient) = ingredientDao.upsertIngredient(ingredient)
-
-    suspend fun deleteIngredient(ingredient: Ingredient) = ingredientDao.deleteIngredient(ingredient)
 
 }

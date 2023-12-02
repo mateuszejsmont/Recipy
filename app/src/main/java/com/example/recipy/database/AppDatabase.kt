@@ -4,17 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.example.recipy.model.Ingredient
-import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 
-@Database(entities = [Meal::class, MealDetails::class, Ingredient::class], version = 2)
+@Database(entities = [MealDetails::class], version = 3)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun favouritesDao(): MealsDao
     abstract fun shoppingDao(): MealDetailsDao
-    abstract fun ingredientDao(): IngredientDao
 
     companion object {
         @Volatile
