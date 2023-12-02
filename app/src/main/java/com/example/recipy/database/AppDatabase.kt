@@ -11,7 +11,6 @@ import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 
 @Database(entities = [Meal::class, MealDetails::class, Ingredient::class], version = 2)
-@TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun favouritesDao(): MealsDao
     abstract fun shoppingDao(): MealDetailsDao
@@ -24,24 +23,14 @@ abstract class AppDatabase: RoomDatabase() {
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                        context,
-                        AppDatabase::class.java,
-                        "app_database.db"
-                        ).build()
+                    context,
+                    AppDatabase::class.java,
+                    "app_database.db"
+                ).build()
                 INSTANCE = instance
 
                 instance
             }
         }
     }
-}
-
-
-class Converters {
-
-    @TypeConverter
-    fun listToJson(value: List<String>?) = value?.joinToString(separator = "~~~~")
-
-    @TypeConverter
-    fun jsonToList(value: String) = value.split("~~~~")
 }

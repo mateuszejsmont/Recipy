@@ -162,7 +162,31 @@ data class MealDetails(
     val measure19: String?,
     @ColumnInfo("measure20")
     @SerialName("strMeasure20")
-    val measure20: String?
+    val measure20: String?,
+    var marked1: Boolean? = false,
+    var marked2: Boolean? = false,
+    var marked3: Boolean? = false,
+    var marked4: Boolean? = false,
+    var marked5: Boolean? = false,
+    var marked6: Boolean? = false,
+    var marked7: Boolean? = false,
+    var marked8: Boolean? = false,
+    var marked9: Boolean? = false,
+    var marked10: Boolean? = false,
+    var marked11: Boolean? = false,
+    var marked12: Boolean? = false,
+    var marked13: Boolean? = false,
+    var marked14: Boolean? = false,
+    var marked15: Boolean? = false,
+    var marked16: Boolean? = false,
+    var marked17: Boolean? = false,
+    var marked18: Boolean? = false,
+    var marked19: Boolean? = false,
+    var marked20: Boolean? = false,
+    @ColumnInfo("is_favourite")
+    var isFavourite: Boolean? = false,
+    @ColumnInfo("is_in_cart")
+    var isInCart: Boolean? = false
 ) {
     fun toMeal(): Meal {
         return Meal(id, name, thumbUrl)

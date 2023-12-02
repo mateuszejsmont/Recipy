@@ -34,7 +34,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineMealsRepository(
             AppDatabase.getDatabase(context).favouritesDao(),
             AppDatabase.getDatabase(context).shoppingDao(),
-            AppDatabase.getDatabase(context).ingredientDao()
+            AppDatabase.getDatabase(context).ingredientDao(),
+            onlineMealsRepository
         )
     }
 }
