@@ -133,10 +133,11 @@ fun ShoppingScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             val ingredients = uiState.value.mealsInCart.flatMap { it.getNonNullIngredientsWithMeasures() }
-            val groupedIngredients = ingredients.groupBy({ it.first }, { it.second })
-            val transformedIngredients = groupedIngredients.map { (ingredient, measures) ->
+            val groupedIngredients = ingredients.groupBy({ it.first.first }, { Pair(it.second, it.first.second) })
+            val transformedIngredients = groupedIngredients.map { (ingredient, pairs) ->
+                 val (marks, measures) = pairs.unzip()
                 Log.d("SHOPPING", measures.first())
-                Pair(ingredient, measures.joinToString(separator = " and "))
+                Triple(ingredient, measures.joinToString(separator = " and "), marks.fold(true) {acc, i -> acc && i})
             }
             item {
                 MealHorizontalList(
@@ -159,7 +160,7 @@ fun ShoppingScreen(
             }
             items(transformedIngredients) { ingredient ->
                 IngredientRow(
-                    checked = false,
+                    checked = ingredient.third,
                     name = ingredient.first,
                     value = ingredient.second,
                     modifier = Modifier.padding(end = 16.dp)

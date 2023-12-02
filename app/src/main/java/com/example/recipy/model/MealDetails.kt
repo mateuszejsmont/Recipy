@@ -192,10 +192,11 @@ data class MealDetails(
         return Meal(id, name, thumbUrl)
     }
 
-    fun getNonNullIngredientsWithMeasures(): List<Pair<String, String>>{
+    fun getNonNullIngredientsWithMeasures(): List<Pair<Pair<String, String>,Boolean>> {
         val ingredients = getIngredients().filterNotNull().filter {it != "" }
         val measures = getMeasures().filterNotNull().filter {it != "" }
-        return ingredients.zip(measures)
+        val marked = getMarks().filterNotNull()
+        return ingredients.zip(measures).zip(marked)
     }
 
     fun getIngredients(): List<String?> {
@@ -245,6 +246,31 @@ data class MealDetails(
             measure18,
             measure19,
             measure20
+        )
+    }
+
+    fun getMarks(): List<Boolean?> {
+        return listOf(
+            marked1,
+            marked2,
+            marked3,
+            marked4,
+            marked5,
+            marked6,
+            marked7,
+            marked8,
+            marked9,
+            marked10,
+            marked11,
+            marked12,
+            marked13,
+            marked14,
+            marked15,
+            marked16,
+            marked17,
+            marked18,
+            marked19,
+            marked20
         )
     }
 }
