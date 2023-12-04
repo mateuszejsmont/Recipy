@@ -6,5 +6,7 @@
     <string name="meals">MEALS</string>
     <string name="empty_favourites_msg">You have no favourite meals. What are you waiting for?</string>
     <string name="empty_shopping_msg">There are no meals on your shopping list.</string>
-
+    <string name="error_message">An internet connection error has occurred</string>
+    <string name="error_try_again">Try again</string>
+    <string name="error_back">Go back</string>
 </resources>
