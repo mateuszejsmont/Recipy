@@ -1,17 +1,14 @@
 package com.example.recipy.ui.main_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,7 +22,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -39,7 +35,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -53,6 +48,8 @@ import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
 import com.example.recipy.model.Meal
 import com.example.recipy.ui.navigation.NavigationDestination
+import com.example.recipy.ui.shared.ErrorBody
+import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
@@ -115,18 +112,17 @@ fun MainScreen(
         }
     ) { innerPadding ->
         when (val uiState = viewModel.mainUiState) {
-            is MainUiState.Error -> LoadingScreen(
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            )
-
-            is MainUiState.Loading -> LoadingScreen(
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            )
-
+            is MainUiState.Error -> {
+                ErrorBody(
+                    stringResource(R.string.error_message),
+                    icon = painterResource(R.drawable.wifi_off),
+                    buttonText = stringResource(R.string.error_try_again),
+                    onButtonClick = { viewModel.retryConnection() }
+                )
+            }
+            is MainUiState.Loading -> {
+                LoadingBody(modifier = Modifier.padding(innerPadding))
+            }
             is MainUiState.Success -> {
                 val coroutineScope = rememberCoroutineScope()
                 val mealsInCategories = uiState.mealsInCategories.collectAsState()
@@ -195,34 +191,6 @@ private fun MainBody(
     }
 }
 
-
-@Composable
-private fun LoadingScreen(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(id = R.drawable.dummy_dish_2),
-        contentDescription = "Loading"
-    )
-}
-
-@Composable
-private fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.dummy_dish_3),
-            contentDescription = "Error"
-        )
-        Text(text = "ERROR!!!")
-        Button(onClick = retryAction) {
-            Text(text = "Retry")
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenTopBar(
@@ -280,9 +248,9 @@ fun TopBarActionButton(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     searchText: String = "",
     onSearchTextChange: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
