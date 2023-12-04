@@ -135,9 +135,9 @@ fun ShoppingScreen(
             val ingredients = uiState.value.mealsInCart.flatMap { it.getNonNullIngredientsWithMeasures() }
             val groupedIngredients = ingredients.groupBy({ it.first.first }, { Pair(it.second, it.first.second) })
             val transformedIngredients = groupedIngredients.map { (ingredient, pairs) ->
-                 val (marks, measures) = pairs.unzip()
+                val (marks, measures) = pairs.unzip()
                 Log.d("SHOPPING", measures.first())
-                Triple(ingredient, measures.joinToString(separator = " and "), marks.fold(true) {acc, i -> acc && i})
+                Triple(ingredient, measures.joinToString(separator = " and "), marks.reduce {acc, i -> acc && i})
             }
             item {
                 MealHorizontalList(
@@ -258,24 +258,6 @@ fun IngredientRow(
     }
 }
 
-//@Composable
-//fun TopBarActionButton(
-//    icon: ImageVector,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    FloatingActionButton(
-//        modifier = modifier,
-//        shape = CircleShape,
-//        containerColor = MaterialTheme.colorScheme.primaryContainer,
-//        elevation = FloatingActionButtonDefaults.elevation(
-//            defaultElevation = 0.dp
-//        ),
-//        onClick = onClick
-//    ) {
-//        Icon(imageVector = icon, contentDescription = null)
-//    }
-//}
 
 @Composable
 @Preview(showBackground = true)
