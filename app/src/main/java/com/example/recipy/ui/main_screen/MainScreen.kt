@@ -206,7 +206,10 @@ private fun LoadingScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+private fun ErrorScreen(
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -280,9 +283,9 @@ fun TopBarActionButton(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     searchText: String = "",
     onSearchTextChange: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
