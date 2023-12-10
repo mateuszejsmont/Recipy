@@ -9,33 +9,36 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class OfflineMealsRepository(
-    private val shoppingDao: MealDetailsDao,
-    private val network: MealsRepository
+    private val shoppingDao: MealDetailsDao
 ) {
-    fun getFavouritesStream(): Flow<List<Meal>> = shoppingDao.getShoppingMeals().map {list -> list.filter {it.isFavourite == true}.map { it.toMeal() }}
 
-    fun getFavouriteItemStream(id: String): Flow<Meal?> = shoppingDao.getShoppingMealWithId(id).filter {it?.isFavourite == true}.map { it?.toMeal() }
+    fun getItemStream(id: String): Flow<MealDetails?> = shoppingDao.getMealWithId(id)
 
-    fun getCartStream(): Flow<List<MealDetails>> = shoppingDao.getShoppingMeals().map {list -> list.filter { it.isInCart == true }}
+    fun getFavouritesStream(): Flow<List<Meal>> = shoppingDao.getFavouriteMeals().map {list -> list.map { it.toMeal() }}
 
-    fun getCartItemStream(id: String): Flow<MealDetails?> = shoppingDao.getShoppingMealWithId(id).filter { it?.isInCart == true}
+    fun getFavouriteItemStream(id: String): Flow<Meal?> = shoppingDao.getFavouriteMealWithId(id).map { it?.toMeal() }
 
-    suspend fun addToFavourite(meal: Meal) {
-        val mealDetails = shoppingDao.getShoppingMealWithId(meal.id).first()
-        if (mealDetails != null) {
+    fun getFavouriteStreamAsMealDetails() : Flow<List<MealDetails>> = shoppingDao.getFavouriteMeals()
+
+    fun getFavouriteItemStreamAsMealDetails(id: String): Flow<MealDetails?> = shoppingDao.getFavouriteMealWithId(id)
+
+    fun getCartStream(): Flow<List<MealDetails>> = shoppingDao.getShoppingMeals()
+
+    fun getCartItemStream(id: String): Flow<MealDetails?> = shoppingDao.getShoppingMealWithId(id)
+
+    suspend fun addToFavourite(mealDetails: MealDetails) {
+        val toInsert = shoppingDao.getMealWithId(mealDetails.id).first()
+        if (toInsert != null) {
+            toInsert.isFavourite = true
+            shoppingDao.upsertShoppingMeal(toInsert)
+        } else {
             mealDetails.isFavourite = true
             shoppingDao.upsertShoppingMeal(mealDetails)
-            return
-        }
-        val mealDetails2 = network.getMealWithId(meal.id)
-        if (mealDetails2 != null) {
-            mealDetails2.isFavourite = true
-            shoppingDao.upsertShoppingMeal(mealDetails2)
         }
     }
 
-    suspend fun removeFromFavourites(meal: Meal) {
-        val mealDetails = shoppingDao.getShoppingMealWithId(meal.id).first()
+    suspend fun removeFromFavourites(id: String) {
+        val mealDetails = shoppingDao.getMealWithId(id).first()
         if (mealDetails != null) {
             mealDetails.isFavourite = false
             shoppingDao.upsertShoppingMeal(mealDetails)
@@ -43,19 +46,30 @@ class OfflineMealsRepository(
     }
 
     suspend fun addToCart(mealDetails: MealDetails) {
-        mealDetails.isInCart = true
-        shoppingDao.upsertShoppingMeal(mealDetails)
+        shoppingDao.upsertShoppingMeal(
+            shoppingDao.getMealWithId(mealDetails.id).map {
+                if (it != null) {
+                    it.isInCart = true
+                    it
+                } else {
+                    mealDetails.isInCart = true
+                    mealDetails
+                }
+            }.first()
+        )
     }
 
     suspend fun removeFromCart(mealDetails: MealDetails) {
-        mealDetails.isInCart = false
-        shoppingDao.upsertShoppingMeal(mealDetails)
+        removeFromCart(mealDetails.id)
     }
 
     suspend fun removeFromCart(mealId: String) {
-        val meal = getCartItemStream(mealId).first()
-        if (meal != null)
-            shoppingDao.deleteShoppingMeal(meal)
+        val mealDetails = shoppingDao.getMealWithId(mealId).first()
+        if (mealDetails != null) {
+            mealDetails.isInCart = false
+            shoppingDao.upsertShoppingMeal(mealDetails)
+        }
     }
 
+    suspend fun updateMeal(mealDetails: MealDetails) = shoppingDao.upsertShoppingMeal(mealDetails)
 }

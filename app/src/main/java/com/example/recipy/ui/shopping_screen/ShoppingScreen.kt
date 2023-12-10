@@ -125,6 +125,7 @@ fun ShoppingScreen(
     viewModel: ShoppingViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState = viewModel.uiState.collectAsState()
+    val shoppingListUiState = viewModel.shoppingListUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -143,7 +144,7 @@ fun ShoppingScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(innerPadding)
             ) {
-                val ingredients = uiState.value.mealsInCart.flatMap { it.getNonNullIngredientsWithMeasures() }
+                val ingredients = shoppingListUiState.value.ingredients
                 val groupedIngredients = ingredients.groupBy({ it.first.first }, { Pair(it.second, it.first.second) })
                 val transformedIngredients = groupedIngredients.map { (ingredient, pairs) ->
                      val (marks, measures) = pairs.unzip()
@@ -270,24 +271,6 @@ fun IngredientRow(
     }
 }
 
-//@Composable
-//fun TopBarActionButton(
-//    icon: ImageVector,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    FloatingActionButton(
-//        modifier = modifier,
-//        shape = CircleShape,
-//        containerColor = MaterialTheme.colorScheme.primaryContainer,
-//        elevation = FloatingActionButtonDefaults.elevation(
-//            defaultElevation = 0.dp
-//        ),
-//        onClick = onClick
-//    ) {
-//        Icon(imageVector = icon, contentDescription = null)
-//    }
-//}
 
 @Composable
 @Preview(showBackground = true)

@@ -1,5 +1,6 @@
 package com.example.recipy.ui.detail_screen
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,9 +35,11 @@ class MealDetailsViewModel(
 ) : ViewModel() {
     private val mealId: String = checkNotNull(savedStateHandle[MealDetailsDestination.mealIdArg])
 
+    private val isFavouriteState = offlineMealsRepository.getItemStream(mealId).map { it?.isFavourite }
+    private val isInCartState = offlineMealsRepository.getItemStream(mealId).map { it?.isInCart }
+    
     var detailUiState : DetailUiState by mutableStateOf(DetailUiState.Loading)
         private set
-
     init {
         getMealDetails()
     }
@@ -47,15 +50,15 @@ class MealDetailsViewModel(
             detailUiState = try {
                 DetailUiState.Success(
                     mealDetails = onlineMealsRepository.getMealWithId(mealId = mealId)!!,
-                    inFavourites = offlineMealsRepository.getFavouriteItemStream(id = mealId)
-                        .map { it != null }
+                    inFavourites = isFavouriteState
+                        .map { it == true }
                         .stateIn(
                             scope = viewModelScope,
                             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                             initialValue = false,
                         ),
-                    inCart = offlineMealsRepository.getCartItemStream(id = mealId)
-                        .map { it != null }
+                    inCart = isInCartState
+                        .map { it == true }
                         .stateIn(
                             scope = viewModelScope,
                             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -71,8 +74,8 @@ class MealDetailsViewModel(
     }
 
     suspend fun switchInFavourites(value: Boolean, mealDetails: MealDetails){
-        if (value) offlineMealsRepository.addToFavourite(mealDetails.toMeal())
-        else offlineMealsRepository.removeFromFavourites(mealDetails.toMeal())
+        if (value) offlineMealsRepository.addToFavourite(mealDetails)
+        else offlineMealsRepository.removeFromFavourites(mealDetails.id)
     }
 
     suspend fun switchInCart(value: Boolean, mealDetails: MealDetails){

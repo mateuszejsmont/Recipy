@@ -32,8 +32,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val offlineMealsRepository: OfflineMealsRepository by lazy {
         OfflineMealsRepository(
-            AppDatabase.getDatabase(context).shoppingDao(),
-            onlineMealsRepository
+            AppDatabase.getDatabase(context).shoppingDao()
         )
     }
 }
