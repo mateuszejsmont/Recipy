@@ -142,7 +142,7 @@ fun MainScreen(
                         coroutineScope.launch {
                             viewModel.switchInFavourites(
                                 value = !favouriteMeals.value.contains(meal),
-                                meal = meal
+                                id = meal.id
                             )
                         }
                     },

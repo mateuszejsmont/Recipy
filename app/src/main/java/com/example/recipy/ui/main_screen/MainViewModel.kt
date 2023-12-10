@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -116,9 +118,10 @@ class MainViewModel(
         return filtered
     }
 
-    suspend fun switchInFavourites(value: Boolean, meal: Meal) {
-        if (value) offlineMealsRepository.addToFavourite(meal)
-        else offlineMealsRepository.removeFromFavourites(meal)
+    suspend fun switchInFavourites(value: Boolean, id: String) {
+        if (value) offlineMealsRepository.addToFavourite(onlineMealsRepository.getMealWithId(id)!!)
+        else offlineMealsRepository.removeFromFavourites(id)
+
     }
 
     companion object {

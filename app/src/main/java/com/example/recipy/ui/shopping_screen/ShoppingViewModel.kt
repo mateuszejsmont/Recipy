@@ -16,6 +16,10 @@ data class ShoppingUiState(
     val mealsInCart: List<MealDetails> = listOf()
 )
 
+data class ShoppingListUiState(
+    val ingredients: List<Pair<Pair<String, String>, Boolean>> = listOf()
+)
+
 class ShoppingViewModel(
     private val onlineMealsRepository: MealsRepository,
     private val offlineMealsRepository: OfflineMealsRepository
@@ -32,12 +36,25 @@ class ShoppingViewModel(
                 initialValue = ShoppingUiState()
             )
 
+    val shoppingListUiState: StateFlow<ShoppingListUiState> =
+        offlineMealsRepository.getCartStream()
+            .filterNotNull()
+            .map { list -> list.flatMap {
+                    it.getNonNullIngredientsWithMeasures()
+                }
+            }.map { ShoppingListUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = ShoppingListUiState()
+            )
+
     suspend fun removeFromCart(meal: Meal) {
         offlineMealsRepository.removeFromCart(meal.id)
     }
 
     suspend fun switchInMarking(value: Boolean, name: String, mealsInCart: List<MealDetails>){
-        mealsInCart.forEach { if(it.mark(name, value)) { offlineMealsRepository.addToCart(it) } }
+        mealsInCart.forEach { if(it.mark(name, value)) { offlineMealsRepository.updateMeal(it) } }
     }
 
     companion object{

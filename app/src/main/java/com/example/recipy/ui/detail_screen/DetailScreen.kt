@@ -109,8 +109,8 @@ fun DetailBody(
     mealDetails: MealDetails,
     inFavourites: Boolean,
     inCart: Boolean,
-    onAddFavourite: (String) -> Unit,
-    onAddToCart: (String) -> Unit,
+    onAddFavourite: () -> Unit,
+    onAddToCart: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -158,8 +158,8 @@ fun DetailBody(
         TopButtons(
             inFavourites = inFavourites,
             inCart = inCart,
-            onAddFavourite = { onAddFavourite(mealDetails.id) },
-            onAddToCart = { onAddToCart(mealDetails.id) },
+            onAddFavourite = { onAddFavourite() },
+            onAddToCart = { onAddToCart() },
             onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()

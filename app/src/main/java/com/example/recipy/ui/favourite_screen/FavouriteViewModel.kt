@@ -32,7 +32,7 @@ class FavouriteViewModel(
             )
 
     suspend fun removeFromFavourites(meal: Meal) {
-        offlineMealsRepository.removeFromFavourites(meal)
+        offlineMealsRepository.removeFromFavourites(meal.id)
     }
 
     companion object{
