@@ -69,6 +69,10 @@ class MainViewModel(
         getMealsInCategories()
     }
 
+    fun retryConnection(){
+        getMealsInCategories()
+    }
+
     private fun getMealsInCategories() {
         viewModelScope.launch {
             mainUiState = MainUiState.Loading

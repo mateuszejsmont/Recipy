@@ -1,6 +1,5 @@
 package com.example.recipy.ui.detail_screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -23,7 +21,6 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,7 +33,6 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,17 +40,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
+import com.example.recipy.ui.shared.ErrorBody
+import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.theme.RecipyTheme
-import com.example.recipy.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 object MealDetailsDestination : NavigationDestination {
@@ -73,8 +72,17 @@ fun DetailScreen(
     )
 ) {
     when (val uiState = viewModel.detailUiState) {
-        is DetailUiState.Error -> LoadingScreen(modifier = modifier)
-        is DetailUiState.Loading -> LoadingScreen(modifier = modifier)
+        is DetailUiState.Loading -> {
+            LoadingBody(modifier = modifier)
+        }
+        is DetailUiState.Error -> {
+            ErrorBody(
+                stringResource(R.string.error_message),
+                icon = painterResource(R.drawable.wifi_off),
+                buttonText = stringResource(R.string.error_back),
+                onButtonClick = onBackClick
+            )
+        }
         is DetailUiState.Success -> {
             val coroutineScope = rememberCoroutineScope()
             val inFavouritesState = uiState.inFavourites.collectAsState()
@@ -262,33 +270,6 @@ private fun IngredientWithMeasure(ingredient: String, measure: String, modifier:
             textAlign = TextAlign.End,
             modifier = Modifier.weight(1f)
         )
-    }
-}
-
-@Composable
-private fun LoadingScreen(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(id = R.drawable.dummy_dish_2),
-        contentDescription = "Loading"
-    )
-}
-
-@Composable
-private fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.dummy_dish_3),
-            contentDescription = "Error"
-        )
-        Text(text = "ERROR!!!")
-        Button(onClick = retryAction) {
-            Text(text = "Retry")
-        }
     }
 }
 

@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +39,7 @@ import com.example.recipy.model.Meal
 import com.example.recipy.ui.navigation.NavigationDestination
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.recipy.AppViewModelProvider
+import com.example.recipy.ui.shared.EmptyBody
 
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
@@ -129,52 +132,61 @@ fun ShoppingScreen(
         modifier = modifier,
         topBar = { ShoppingScreenTopBar(onBackClick = onBackClick, modifier = Modifier.padding(horizontal = 8.dp)) }
     ) { innerPadding ->
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            val ingredients = shoppingListUiState.value.ingredients
-            val groupedIngredients = ingredients.groupBy({ it.first.first }, { Pair(it.second, it.first.second) })
-            val transformedIngredients = groupedIngredients.map { (ingredient, pairs) ->
-                val (marks, measures) = pairs.unzip()
-                Log.d("SHOPPING", measures.first())
-                Triple(ingredient, measures.joinToString(separator = " and "), marks.reduce {acc, i -> acc && i})
-            }
-            item {
-                MealHorizontalList(
-                    meals = uiState.value.mealsInCart.map { it.toMeal() },
-                    onMealClick = onMealClick,
-                    onMealActionButtonClick = {
-                        coroutineScope.launch {
-                            viewModel.removeFromCart(it)
+        if (uiState.value.mealsInCart.isEmpty()){
+            EmptyBody(
+                stringResource(R.string.empty_shopping_msg),
+                Icons.Outlined.ShoppingCart,
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
+        else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                val ingredients = shoppingListUiState.value.ingredients
+                val groupedIngredients = ingredients.groupBy({ it.first.first }, { Pair(it.second, it.first.second) })
+                val transformedIngredients = groupedIngredients.map { (ingredient, pairs) ->
+                     val (marks, measures) = pairs.unzip()
+                    Log.d("SHOPPING", measures.first())
+                    Triple(ingredient, measures.joinToString(separator = " and "), marks.fold(true) {acc, i -> acc && i})
+                }
+                item {
+                    MealHorizontalList(
+                        meals = uiState.value.mealsInCart.map { it.toMeal() },
+                        onMealClick = onMealClick,
+                        onMealActionButtonClick = {
+                            coroutineScope.launch {
+                                viewModel.removeFromCart(it)
+                            }
+                        },
+                        name = stringResource(R.string.meals),
+                        mealActionButtonIcon = {Icons.Default.Clear}
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 16.dp))
+                    Text(
+                        text = "TO BUY",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                items(transformedIngredients) { ingredient ->
+                    IngredientRow(
+                        checked = ingredient.third,
+                        name = ingredient.first,
+                        value = ingredient.second,
+                        modifier = Modifier.padding(end = 16.dp),
+                        onIngredientButtonClick = { name, checked ->
+                            coroutineScope.launch {
+                                viewModel.switchInMarking(
+                                    value = checked,
+                                    name = name,
+                                    mealsInCart = uiState.value.mealsInCart
+                                )
+                            }
                         }
-                    },
-                    name = stringResource(R.string.meals),
-                    mealActionButtonIcon = {Icons.Default.Clear}
-                )
-                Spacer(modifier = Modifier.padding(vertical = 16.dp))
-                Text(
-                    text = "TO BUY",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            items(transformedIngredients) { ingredient ->
-                IngredientRow(
-                    checked = ingredient.third,
-                    name = ingredient.first,
-                    value = ingredient.second,
-                    modifier = Modifier.padding(end = 16.dp),
-                    onIngredientButtonClick = { name, checked ->
-                        coroutineScope.launch {
-                            viewModel.switchInMarking(
-                                value = checked,
-                                name = name,
-                                mealsInCart = uiState.value.mealsInCart
-                            )
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
