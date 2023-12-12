@@ -2,21 +2,18 @@ package com.example.recipy.ui.shopping_screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -34,89 +31,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.recipy.R
-import com.example.recipy.model.Meal
-import com.example.recipy.ui.navigation.NavigationDestination
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.recipy.AppViewModelProvider
+import com.example.recipy.R
+import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
-
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
-
-val dummyDishes = listOf(
-    Meal(
-        id = "1",
-        name = "Teriyaki Chicken Caserolle",
-        thumbUrl = ""
-    ),
-    Meal(
-        id = "1",
-        name = "Polish Pancakes",
-        thumbUrl = ""
-    ),
-    Meal(
-        id = "1",
-        name = "Beetroot Soup",
-        thumbUrl = ""
-    ),
-    Meal(
-        id = "1",
-        name = "Sweet Potato Fries",
-        thumbUrl = ""
-    ),
-)
-val ingredients = arrayOf(
-    "soy sauce",
-    "water",
-    "brown sugar",
-    "ground ginger",
-    "minced garlic",
-    "cornstarch",
-    "chicken breasts",
-    "stir-fry vegetablesas dupa cycki i wagiina na rurze sie wygina",
-    "brown rice",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    null,
-    null,
-    null,
-    null,
-    null
-)
-val measures = arrayOf(
-    "3/4 cup",
-    "1/2 cup",
-    "1/4 cup",
-    "1/2 teaspoon",
-    "1/2 teaspoon",
-    "4 Tablespoons",
-    "2",
-    "4 pounded to 1cm thickness",
-    "3 cups",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    null,
-    null,
-    null,
-    null,
-    null,
-)
 
 object ShoppingDestination : NavigationDestination {
     override val route = "shopping"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingScreen(
     onMealClick: (String) -> Unit,
@@ -192,7 +119,6 @@ fun ShoppingScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingScreenTopBar(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(

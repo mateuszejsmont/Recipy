@@ -1,6 +1,5 @@
 package com.example.recipy.ui.shared
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

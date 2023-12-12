@@ -3,7 +3,6 @@ package com.example.recipy.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import android.util.Log
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

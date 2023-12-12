@@ -3,10 +3,6 @@ package com.example.recipy.network
 import com.example.recipy.model.MealCategoriesList
 import com.example.recipy.model.MealDetailsList
 import com.example.recipy.model.MealList
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
 

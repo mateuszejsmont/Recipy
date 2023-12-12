@@ -1,6 +1,5 @@
 package com.example.recipy.data
 
-import android.util.Log
 import com.example.recipy.model.Meal
 import com.example.recipy.model.MealCategory
 import com.example.recipy.model.MealDetails

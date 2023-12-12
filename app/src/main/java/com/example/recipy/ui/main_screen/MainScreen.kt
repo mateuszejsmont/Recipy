@@ -29,9 +29,9 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -255,8 +255,10 @@ fun SearchBar(
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = modifier,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
             focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
             unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
         ),
