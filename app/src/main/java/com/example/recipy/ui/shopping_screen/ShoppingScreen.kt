@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -37,6 +36,7 @@ import com.example.recipy.R
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
 import com.example.recipy.ui.shared.MealHorizontalList
+import com.example.recipy.ui.shared.SimpleTopBar
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,7 @@ fun ShoppingScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = { ShoppingScreenTopBar(onBackClick = onBackClick, modifier = Modifier.padding(horizontal = 8.dp)) }
+        topBar = { SimpleTopBar(title = stringResource(R.string.shopping), onBackClick = onBackClick) }
     ) { innerPadding ->
         if (uiState.value.mealsInCart.isEmpty()){
             EmptyBody(
@@ -118,31 +118,6 @@ fun ShoppingScreen(
         }
     }
 }
-
-@Composable
-fun ShoppingScreenTopBar(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            colors = IconButtonDefaults.iconButtonColors(Color.White),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = null,
-                tint = Color(0xFF061B54)
-            )
-        }
-        Text(
-            stringResource(R.string.shopping),
-            style = MaterialTheme.typography.titleLarge
-        )
-    }
-}
-
 
 @Composable
 fun IngredientRow(

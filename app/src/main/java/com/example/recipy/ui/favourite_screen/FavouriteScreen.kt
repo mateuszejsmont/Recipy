@@ -2,26 +2,17 @@ package com.example.recipy.ui.favourite_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,6 +24,7 @@ import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
 import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.shared.MealHorizontalList
+import com.example.recipy.ui.shared.SimpleTopBar
 import kotlinx.coroutines.launch
 
 object FavouriteDestination : NavigationDestination {
@@ -51,10 +43,7 @@ fun FavouriteScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            FavouriteScreenTopBar(
-                onBackClick = onBackClick,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
+            SimpleTopBar(title = stringResource(R.string.favourites), onBackClick = onBackClick)
         }
     ) { innerPadding ->
         when (val uiState = viewModel.favouriteUiState) {
@@ -110,28 +99,4 @@ private fun FavouriteBody(
         }
     }
 
-}
-
-@Composable
-fun FavouriteScreenTopBar(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            colors = IconButtonDefaults.iconButtonColors(Color.White),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = null,
-                tint = Color(0xFF061B54)
-            )
-        }
-        Text(
-            stringResource(R.string.favourites),
-            style = MaterialTheme.typography.titleLarge
-        )
-    }
 }
