@@ -1,7 +1,6 @@
 package com.example.recipy.ui.favourite_screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
+import com.example.recipy.model.Meal
+import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
+import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.shared.MealHorizontalList
 import kotlinx.coroutines.launch
 
@@ -44,7 +46,6 @@ fun FavouriteScreen(
     modifier: Modifier = Modifier,
     viewModel: FavouriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -56,37 +57,59 @@ fun FavouriteScreen(
             )
         }
     ) { innerPadding ->
-        if (uiState.value.favouriteMeals.isEmpty()) {
-            EmptyBody(
-                stringResource(R.string.empty_favourites_msg),
-                Icons.Default.FavoriteBorder,
-                modifier = Modifier.padding(innerPadding)
-            )
-        } else {
-            Column(
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    contentPadding = PaddingValues(vertical = 12.dp)
-                ) {
-                    items(uiState.value.favouriteMeals.keys.toList()) { category ->
-                        MealHorizontalList(
-                            meals = uiState.value.favouriteMeals[category]!!.map { it.toMeal() },
-                            name = category,
-                            onMealClick = onMealClick,
-                            onMealActionButtonClick = { meal ->
-                                coroutineScope.launch {
-                                    viewModel.removeFromFavourites(meal)
-                                }
-                            },
-                            mealActionButtonIcon = { Icons.Filled.Favorite }
-                        )
-                    }
+        when (val uiState = viewModel.favouriteUiState) {
+            is FavouriteUiState.Loading -> {
+                LoadingBody(modifier = Modifier.padding(innerPadding))
+            }
+
+            is FavouriteUiState.Success -> {
+                val favouritesInCategories = uiState.favouriteMealsInCategories.collectAsState()
+                if (favouritesInCategories.value.isEmpty()) {
+                    EmptyBody(
+                        stringResource(R.string.empty_favourites_msg),
+                        Icons.Default.FavoriteBorder,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                } else {
+                    FavouriteBody(
+                        mealsInCategories = favouritesInCategories.value,
+                        onMealActionButtonClick = { meal ->
+                            coroutineScope.launch {
+                                viewModel.removeFromFavourites(meal)
+                            }
+                        },
+                        onMealClick = onMealClick,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun FavouriteBody(
+    mealsInCategories: Map<String, List<MealDetails>>,
+    onMealActionButtonClick: (Meal) -> Unit,
+    onMealClick: (String) -> Unit,
+    modifier: Modifier
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(vertical = 12.dp)
+    ) {
+        items(mealsInCategories.keys.toList()) { category ->
+            MealHorizontalList(
+                meals = mealsInCategories[category]!!.map { it.toMeal() },
+                name = category,
+                onMealClick = onMealClick,
+                onMealActionButtonClick = onMealActionButtonClick,
+                mealActionButtonIcon = { Icons.Filled.Favorite }
+            )
+        }
+    }
+
 }
 
 @Composable

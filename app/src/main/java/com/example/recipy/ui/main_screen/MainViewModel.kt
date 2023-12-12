@@ -45,7 +45,7 @@ class MainViewModel(
     private val mealsInCategoriesCache: MutableMap<String, List<Meal>> = mutableMapOf()
 
     private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
+    private val searchText = _searchText.asStateFlow()
 
     private val _mealsInCategories = MutableStateFlow(mealsInCategoriesCache)
     val mealsInCategories = searchText.combine(_mealsInCategories) { text, mealsInCategories ->

@@ -20,7 +20,6 @@ object AppViewModelProvider {
         }
         initializer {
             FavouriteViewModel(
-                recipyApplication().container.onlineMealsRepository,
                 recipyApplication().container.offlineMealsRepository,
             )
         }

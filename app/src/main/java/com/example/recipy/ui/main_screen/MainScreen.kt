@@ -107,7 +107,7 @@ fun MainScreen(
             MainScreenTopBar(
                 onFavouriteClick = onFavouriteClick,
                 onShoppingClick = onShoppingClick,
-                Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     ) { innerPadding ->
