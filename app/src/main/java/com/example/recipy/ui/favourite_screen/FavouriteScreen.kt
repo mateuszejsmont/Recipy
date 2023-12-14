@@ -9,10 +9,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +28,7 @@ import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
 import com.example.recipy.ui.shared.LoadingBody
+import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.shared.SimpleTopBar
 import kotlinx.coroutines.launch
@@ -39,9 +45,15 @@ fun FavouriteScreen(
     viewModel: FavouriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = {SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {  MainSnackbar(it) }
+        )},
         topBar = {
             SimpleTopBar(title = stringResource(R.string.favourites), onBackClick = onBackClick)
         }
@@ -65,6 +77,13 @@ fun FavouriteScreen(
                         onMealActionButtonClick = { meal ->
                             coroutineScope.launch {
                                 viewModel.removeFromFavourites(meal)
+
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                                snackbarHostState.showSnackbar(
+                                    message = context.resources.getString(R.string.snackbar_removed_from_favourites),
+                                    duration = SnackbarDuration.Short,
+                                    withDismissAction = true,
+                                )
                             }
                         },
                         onMealClick = onMealClick,
@@ -93,7 +112,9 @@ private fun FavouriteBody(
                 meals = mealsInCategories[category]!!.map { it.toMeal() },
                 name = category,
                 onMealClick = onMealClick,
-                onMealActionButtonClick = onMealActionButtonClick,
+                onMealActionButtonClick = {
+                    onMealActionButtonClick(it)
+                },
                 mealActionButtonIcon = { Icons.Filled.Favorite }
             )
         }

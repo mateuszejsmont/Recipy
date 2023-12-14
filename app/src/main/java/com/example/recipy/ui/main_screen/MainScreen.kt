@@ -1,5 +1,6 @@
 package com.example.recipy.ui.main_screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -31,13 +32,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,9 +58,11 @@ import com.example.recipy.model.Meal
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.ErrorBody
 import com.example.recipy.ui.shared.LoadingBody
+import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 val dummyMeals = listOf(
     Meal(
@@ -101,8 +111,16 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(
+            hostState =  snackbarHostState,
+            snackbar = {  MainSnackbar(it) }
+        ) },
         topBar = {
             MainScreenTopBar(
                 onFavouriteClick = onFavouriteClick,
@@ -124,7 +142,6 @@ fun MainScreen(
                 LoadingBody(modifier = Modifier.padding(innerPadding))
             }
             is MainUiState.Success -> {
-                val coroutineScope = rememberCoroutineScope()
                 val mealsInCategories = uiState.mealsInCategories.collectAsState()
                 val favouriteMeals = uiState.favouriteMeals.collectAsState()
                 val searchText = uiState.searchText.collectAsState()
@@ -135,10 +152,19 @@ fun MainScreen(
                     searchText = searchText.value,
                     onMealClick = onMealClick,
                     onMealFavouriteClick = { meal ->
-                        coroutineScope.launch {
+                        scope.launch {
+                            val newValue = !favouriteMeals.value.contains(meal)
                             viewModel.switchInFavourites(
-                                value = !favouriteMeals.value.contains(meal),
+                                value = newValue,
                                 id = meal.id
+                            )
+
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                            snackbarHostState.showSnackbar(
+                                message = if (newValue) context.resources.getString(R.string.snackbar_added_to_favourites)
+                                    else context.resources.getString(R.string.snackbar_removed_from_favourites),
+                                duration = SnackbarDuration.Short,
+                                withDismissAction = true,
                             )
                         }
                     },

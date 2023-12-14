@@ -27,11 +27,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,8 +55,10 @@ import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
+import com.example.recipy.ui.shared.DetailsSnackbar
 import com.example.recipy.ui.shared.ErrorBody
 import com.example.recipy.ui.shared.LoadingBody
+import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
 
@@ -62,7 +68,6 @@ object MealDetailsDestination : NavigationDestination {
     val routeWithArgs = "$route/{$mealIdArg}"
 }
 
-
 @Composable
 fun DetailScreen(
     onBackClick: () -> Unit,
@@ -71,6 +76,10 @@ fun DetailScreen(
         factory = AppViewModelProvider.Factory
     )
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
     when (val uiState = viewModel.detailUiState) {
         is DetailUiState.Loading -> {
             LoadingBody(modifier = modifier)
@@ -84,7 +93,6 @@ fun DetailScreen(
             )
         }
         is DetailUiState.Success -> {
-            val coroutineScope = rememberCoroutineScope()
             val inFavouritesState = uiState.inFavourites.collectAsState()
             val inCartState = uiState.inCart.collectAsState()
 
@@ -92,17 +100,36 @@ fun DetailScreen(
                 mealDetails = uiState.mealDetails,
                 inFavourites = inFavouritesState.value,
                 inCart = inCartState.value,
-                onAddFavourite = {
+                onSwitchFavourite = {
                     coroutineScope.launch {
-                        viewModel.switchInFavourites(!inFavouritesState.value, uiState.mealDetails)
+                        val newValue = !inFavouritesState.value
+                        viewModel.switchInFavourites(newValue, uiState.mealDetails)
+
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(
+                            message = if (newValue) context.resources.getString(R.string.snackbar_added_to_favourites)
+                                else context.resources.getString(R.string.snackbar_removed_from_favourites),
+                            duration = SnackbarDuration.Short,
+                            withDismissAction = true,
+                        )
                     }
                 },
-                onAddToCart = {
+                onSwitchInCart = {
                     coroutineScope.launch {
-                        viewModel.switchInCart(!inCartState.value, uiState.mealDetails)
+                        val newValue = !inCartState.value
+                        viewModel.switchInCart(newValue, uiState.mealDetails)
+
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(
+                            message = if (newValue) context.resources.getString(R.string.snackbar_added_to_cart)
+                                else context.resources.getString(R.string.snackbar_removed_from_cart),
+                            duration = SnackbarDuration.Short,
+                            withDismissAction = true,
+                        )
                     }
                 },
                 onBackClick = onBackClick,
+                snackbarHostState = snackbarHostState,
                 modifier = modifier
             )
         }
@@ -115,10 +142,11 @@ fun DetailScreen(
 @Composable
 fun DetailBody(
     mealDetails: MealDetails,
+    snackbarHostState: SnackbarHostState,
     inFavourites: Boolean,
     inCart: Boolean,
-    onAddFavourite: () -> Unit,
-    onAddToCart: () -> Unit,
+    onSwitchFavourite: () -> Unit,
+    onSwitchInCart: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -133,6 +161,10 @@ fun DetailBody(
     )
 
     BottomSheetScaffold(
+        snackbarHost = { SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {  DetailsSnackbar(it) }
+        )},
         sheetShape = RoundedCornerShape(sheetCornerRadius, sheetCornerRadius, 0.dp, 0.dp),
         scaffoldState = scaffoldState,
         sheetDragHandle = {
@@ -166,8 +198,8 @@ fun DetailBody(
         TopButtons(
             inFavourites = inFavourites,
             inCart = inCart,
-            onAddFavourite = { onAddFavourite() },
-            onAddToCart = { onAddToCart() },
+            onAddFavourite = { onSwitchFavourite() },
+            onAddToCart = { onSwitchInCart() },
             onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -273,67 +305,67 @@ private fun IngredientWithMeasure(ingredient: String, measure: String, modifier:
     }
 }
 
-@Composable
-@Preview(showBackground = true)
-fun DetailScreenPreview() {
-    val mealDetails = MealDetails(
-        id = "52804",
-        name = "Poutine",
-        drinkAlternate = null,
-        category = "Miscellaneous",
-        area = "Canadian",
-        instructions = "Heat oil in a deep fryer or deep heavy skillet to 365°F (185°C).\r\nWarm gravy in saucepan or microwave.\r\nPlace the fries into the hot oil, and cook until light brown, about 5 minutes.\r\nRemove to a paper towel lined plate to drain.\r\nPlace the fries on a serving platter, and sprinkle the cheese over them.\r\nLadle gravy over the fries and cheese, and serve immediately.",
-        thumbUrl = "https://www.themealdb.com/images/media/meals/uuyrrx1487327597.jpg",
-        tags = "UnHealthy,Speciality,HangoverFood",
-        youtubeUrl = "https://www.youtube.com/watch?v=UVAMAoA2_WU",
-        ingredient1 = "Vegetable Oil",
-        ingredient2 = "Vegetable Oil",
-        ingredient3 = "Vegetable Oil",
-        ingredient4 = "Vegetable Oil",
-        ingredient5 = "Vegetable Oil",
-        ingredient6 = "Vegetable Oil",
-        ingredient7 = "Vegetable Oil",
-        ingredient8 = "Vegetable Oil",
-        ingredient9 = "",
-        ingredient10 = "",
-        ingredient11 = "",
-        ingredient12 = "",
-        ingredient13 = "",
-        ingredient14 = "",
-        ingredient15 = "",
-        ingredient16 = "",
-        ingredient17 = "",
-        ingredient18 = "",
-        ingredient19 = "",
-        ingredient20 = "",
-        measure1 = "Dash",
-        measure2 = "Dash",
-        measure3 = "Dash",
-        measure4 = "Dash",
-        measure5 = "Dash",
-        measure6 = "Dash",
-        measure7 = "Dash",
-        measure8 = "Dash",
-        measure9 = "",
-        measure10 = "",
-        measure11 = "",
-        measure12 = "",
-        measure13 = "",
-        measure14 = "",
-        measure15 = "",
-        measure16 = "",
-        measure17 = "",
-        measure18 = "",
-        measure19 = "",
-        measure20 = "",
-    )
-    RecipyTheme {
-        DetailBody(
-            mealDetails = mealDetails,
-            inFavourites = false,
-            inCart = false,
-            onAddFavourite = {},
-            onAddToCart = {},
-            onBackClick = {})
-    }
-}
+//@Composable
+//@Preview(showBackground = true)
+//fun DetailScreenPreview() {
+//    val mealDetails = MealDetails(
+//        id = "52804",
+//        name = "Poutine",
+//        drinkAlternate = null,
+//        category = "Miscellaneous",
+//        area = "Canadian",
+//        instructions = "Heat oil in a deep fryer or deep heavy skillet to 365°F (185°C).\r\nWarm gravy in saucepan or microwave.\r\nPlace the fries into the hot oil, and cook until light brown, about 5 minutes.\r\nRemove to a paper towel lined plate to drain.\r\nPlace the fries on a serving platter, and sprinkle the cheese over them.\r\nLadle gravy over the fries and cheese, and serve immediately.",
+//        thumbUrl = "https://www.themealdb.com/images/media/meals/uuyrrx1487327597.jpg",
+//        tags = "UnHealthy,Speciality,HangoverFood",
+//        youtubeUrl = "https://www.youtube.com/watch?v=UVAMAoA2_WU",
+//        ingredient1 = "Vegetable Oil",
+//        ingredient2 = "Vegetable Oil",
+//        ingredient3 = "Vegetable Oil",
+//        ingredient4 = "Vegetable Oil",
+//        ingredient5 = "Vegetable Oil",
+//        ingredient6 = "Vegetable Oil",
+//        ingredient7 = "Vegetable Oil",
+//        ingredient8 = "Vegetable Oil",
+//        ingredient9 = "",
+//        ingredient10 = "",
+//        ingredient11 = "",
+//        ingredient12 = "",
+//        ingredient13 = "",
+//        ingredient14 = "",
+//        ingredient15 = "",
+//        ingredient16 = "",
+//        ingredient17 = "",
+//        ingredient18 = "",
+//        ingredient19 = "",
+//        ingredient20 = "",
+//        measure1 = "Dash",
+//        measure2 = "Dash",
+//        measure3 = "Dash",
+//        measure4 = "Dash",
+//        measure5 = "Dash",
+//        measure6 = "Dash",
+//        measure7 = "Dash",
+//        measure8 = "Dash",
+//        measure9 = "",
+//        measure10 = "",
+//        measure11 = "",
+//        measure12 = "",
+//        measure13 = "",
+//        measure14 = "",
+//        measure15 = "",
+//        measure16 = "",
+//        measure17 = "",
+//        measure18 = "",
+//        measure19 = "",
+//        measure20 = "",
+//    )
+//    RecipyTheme {
+//        DetailBody(
+//            mealDetails = mealDetails,
+//            inFavourites = false,
+//            inCart = false,
+//            onSwitchFavourite = {},
+//            onSwitchInCart = {},
+//            onBackClick = {})
+//    }
+//}
