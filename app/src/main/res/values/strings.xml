@@ -9,4 +9,8 @@
     <string name="error_message">An internet connection error has occurred</string>
     <string name="error_try_again">Try again</string>
     <string name="error_back">Go back</string>
+    <string name="snackbar_added_to_favourites">A new meal has been added to favourites!</string>
+    <string name="snackbar_removed_from_favourites">Removed a meal from favourites.</string>
+    <string name="snackbar_added_to_cart">A new meal has been added to the cart!</string>
+    <string name="snackbar_removed_from_cart">Removed a meal from the cart.</string>
 </resources>
