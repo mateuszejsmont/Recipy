@@ -21,7 +21,6 @@ data class ShoppingListUiState(
 )
 
 class ShoppingViewModel(
-    private val onlineMealsRepository: MealsRepository,
     private val offlineMealsRepository: OfflineMealsRepository
 ) : ViewModel() {
     val uiState: StateFlow<ShoppingUiState> =

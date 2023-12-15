@@ -25,7 +25,6 @@ object AppViewModelProvider {
         }
         initializer {
             ShoppingViewModel(
-                recipyApplication().container.onlineMealsRepository,
                 recipyApplication().container.offlineMealsRepository,
             )
         }

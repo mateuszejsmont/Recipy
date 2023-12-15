@@ -34,9 +34,8 @@ class MealDetailsViewModel(
 ) : ViewModel() {
     private val mealId: String = checkNotNull(savedStateHandle[MealDetailsDestination.mealIdArg])
 
-    private val isFavouriteState = offlineMealsRepository.getItemStream(mealId).map { it?.isFavourite }
-    private val isInCartState = offlineMealsRepository.getItemStream(mealId).map { it?.isInCart }
-    
+    private val mealDetailStream = offlineMealsRepository.getItemStream(mealId)
+
     var detailUiState : DetailUiState by mutableStateOf(DetailUiState.Loading)
         private set
     init {
@@ -49,15 +48,15 @@ class MealDetailsViewModel(
             detailUiState = try {
                 DetailUiState.Success(
                     mealDetails = onlineMealsRepository.getMealWithId(mealId = mealId)!!,
-                    inFavourites = isFavouriteState
-                        .map { it == true }
+                    inFavourites = mealDetailStream
+                        .map { it?.isFavourite == true }
                         .stateIn(
                             scope = viewModelScope,
                             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                             initialValue = false,
                         ),
-                    inCart = isInCartState
-                        .map { it == true }
+                    inCart = mealDetailStream
+                        .map { it?.isInCart == true }
                         .stateIn(
                             scope = viewModelScope,
                             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
