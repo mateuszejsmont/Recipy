@@ -27,7 +27,6 @@ import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
 import com.example.recipy.ui.shared.EmptyBody
-import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.shared.SimpleTopBar
@@ -50,50 +49,47 @@ fun FavouriteScreen(
 
     Scaffold(
         modifier = modifier,
-        snackbarHost = {SnackbarHost(
-            hostState = snackbarHostState,
-            snackbar = {  MainSnackbar(it) }
-        )},
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { MainSnackbar(it) }
+            )
+        },
         topBar = {
             SimpleTopBar(title = stringResource(R.string.favourites), onBackClick = onBackClick)
         }
     ) { innerPadding ->
-        when (val uiState = viewModel.favouriteUiState) {
-            is FavouriteUiState.Loading -> {
-                LoadingBody(modifier = Modifier.padding(innerPadding))
-            }
 
-            is FavouriteUiState.Success -> {
-                val favouritesInCategories = uiState.favouriteMealsInCategories.collectAsState()
-                if (favouritesInCategories.value.isEmpty()) {
-                    EmptyBody(
-                        stringResource(R.string.empty_favourites_msg),
-                        Icons.Default.FavoriteBorder,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                } else {
-                    FavouriteBody(
-                        mealsInCategories = favouritesInCategories.value,
-                        onMealActionButtonClick = { meal ->
-                            coroutineScope.launch {
-                                viewModel.removeFromFavourites(meal)
+        val uiState = viewModel.uiState.collectAsState()
+        if (uiState.value.favouritesInCategories.isEmpty()) {
+            EmptyBody(
+                stringResource(R.string.empty_favourites_msg),
+                Icons.Default.FavoriteBorder,
+                modifier = Modifier.padding(innerPadding)
+            )
+        } else {
+            FavouriteBody(
+                mealsInCategories = uiState.value.favouritesInCategories,
+                onMealActionButtonClick = { meal ->
+                    coroutineScope.launch {
+                        viewModel.removeFromFavourites(meal)
 
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                                snackbarHostState.showSnackbar(
-                                    message = context.resources.getString(R.string.snackbar_removed_from_favourites),
-                                    duration = SnackbarDuration.Short,
-                                    withDismissAction = true,
-                                )
-                            }
-                        },
-                        onMealClick = onMealClick,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(
+                            message = context.resources.getString(R.string.snackbar_removed_from_favourites),
+                            duration = SnackbarDuration.Short,
+                            withDismissAction = true,
+                        )
+                    }
+                },
+                onMealClick = onMealClick,
+                modifier = Modifier.padding(innerPadding)
+            )
         }
+
     }
 }
+
 
 @Composable
 private fun FavouriteBody(
