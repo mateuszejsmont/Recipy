@@ -26,8 +26,8 @@ import com.example.recipy.R
 import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
+import com.example.recipy.ui.shared.ActionSnackbar
 import com.example.recipy.ui.shared.EmptyBody
-import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.shared.SimpleTopBar
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ fun FavouriteScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState,
-                snackbar = { MainSnackbar(it) }
+                snackbar = { ActionSnackbar(it) }
             )
         },
         topBar = {
@@ -86,7 +86,6 @@ fun FavouriteScreen(
                 modifier = Modifier.padding(innerPadding)
             )
         }
-
     }
 }
 

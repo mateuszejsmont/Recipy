@@ -2,7 +2,6 @@ package com.example.recipy.ui.shopping_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.recipy.data.MealsRepository
 import com.example.recipy.database.OfflineMealsRepository
 import com.example.recipy.model.Meal
 import com.example.recipy.model.MealDetails

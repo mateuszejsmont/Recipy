@@ -13,4 +13,8 @@
     <string name="snackbar_removed_from_favourites">Removed a meal from favourites.</string>
     <string name="snackbar_added_to_cart">A new meal has been added to the cart!</string>
     <string name="snackbar_removed_from_cart">Removed a meal from the cart.</string>
+    <string name="instructions">INSTRUCTIONS</string>
+    <string name="ingredients">INGREDIENTS</string>
+    <string name="to_buy">TO BUY</string>
+    <string name="search">Search</string>
 </resources>

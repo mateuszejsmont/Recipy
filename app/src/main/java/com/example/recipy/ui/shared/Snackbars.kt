@@ -8,18 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MainSnackbar(data: SnackbarData){
-    Snackbar(
-        snackbarData = data,
-        shape = RoundedCornerShape(24.dp),
-        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        contentColor = MaterialTheme.colorScheme.primaryContainer,
-        dismissActionContentColor = MaterialTheme.colorScheme.primaryContainer,
-    )
-}
-
-@Composable
-fun DetailsSnackbar(data: SnackbarData){
+fun ActionSnackbar(data: SnackbarData){
     Snackbar(
         snackbarData = data,
         shape = RoundedCornerShape(24.dp),

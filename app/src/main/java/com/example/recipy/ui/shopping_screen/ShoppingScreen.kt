@@ -15,7 +15,6 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -28,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,8 +37,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
 import com.example.recipy.ui.navigation.NavigationDestination
+import com.example.recipy.ui.shared.ActionSnackbar
 import com.example.recipy.ui.shared.EmptyBody
-import com.example.recipy.ui.shared.MainSnackbar
 import com.example.recipy.ui.shared.MealHorizontalList
 import com.example.recipy.ui.shared.SimpleTopBar
 import com.example.recipy.ui.theme.RecipyTheme
@@ -68,7 +66,7 @@ fun ShoppingScreen(
         modifier = modifier,
         snackbarHost = { SnackbarHost(
             hostState =  snackbarHostState,
-            snackbar = {  MainSnackbar(it) }
+            snackbar = {  ActionSnackbar(it) }
         )},
         topBar = { SimpleTopBar(title = stringResource(R.string.shopping), onBackClick = onBackClick) }
     ) { innerPadding ->
@@ -112,7 +110,7 @@ fun ShoppingScreen(
                     )
                     Spacer(modifier = Modifier.padding(vertical = 16.dp))
                     Text(
-                        text = "TO BUY",
+                        text = stringResource(R.string.to_buy),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
@@ -154,19 +152,16 @@ fun IngredientRow(
     ) {
         IconButton(
             onClick = { onIngredientButtonClick(name, !checked) },
-            colors = IconButtonDefaults.iconButtonColors(Color.White)
         ) {
             if (checked) {
                 Icon(
                     imageVector = Icons.Filled.CheckCircle,
                     contentDescription = null,
-                    tint = Color(0xFF061B54)
                 )
             } else {
                 Icon(
                     imageVector = Icons.Outlined.CheckCircle,
                     contentDescription = null,
-                    tint = Color(0xFF061B54)
                 )
             }
         }

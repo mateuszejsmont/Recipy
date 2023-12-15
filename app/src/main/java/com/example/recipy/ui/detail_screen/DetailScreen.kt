@@ -23,9 +23,6 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -55,10 +52,10 @@ import com.example.recipy.AppViewModelProvider
 import com.example.recipy.R
 import com.example.recipy.model.MealDetails
 import com.example.recipy.ui.navigation.NavigationDestination
-import com.example.recipy.ui.shared.DetailsSnackbar
+import com.example.recipy.ui.shared.ActionSnackbar
 import com.example.recipy.ui.shared.ErrorBody
 import com.example.recipy.ui.shared.LoadingBody
-import com.example.recipy.ui.shared.MainSnackbar
+import com.example.recipy.ui.shared.TopBarActionButton
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
 
@@ -84,6 +81,7 @@ fun DetailScreen(
         is DetailUiState.Loading -> {
             LoadingBody(modifier = modifier)
         }
+
         is DetailUiState.Error -> {
             ErrorBody(
                 stringResource(R.string.error_message),
@@ -92,6 +90,7 @@ fun DetailScreen(
                 onButtonClick = onBackClick
             )
         }
+
         is DetailUiState.Success -> {
             val inFavouritesState = uiState.inFavourites.collectAsState()
             val inCartState = uiState.inCart.collectAsState()
@@ -108,7 +107,7 @@ fun DetailScreen(
                         snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar(
                             message = if (newValue) context.resources.getString(R.string.snackbar_added_to_favourites)
-                                else context.resources.getString(R.string.snackbar_removed_from_favourites),
+                            else context.resources.getString(R.string.snackbar_removed_from_favourites),
                             duration = SnackbarDuration.Short,
                             withDismissAction = true,
                         )
@@ -122,7 +121,7 @@ fun DetailScreen(
                         snackbarHostState.currentSnackbarData?.dismiss()
                         snackbarHostState.showSnackbar(
                             message = if (newValue) context.resources.getString(R.string.snackbar_added_to_cart)
-                                else context.resources.getString(R.string.snackbar_removed_from_cart),
+                            else context.resources.getString(R.string.snackbar_removed_from_cart),
                             duration = SnackbarDuration.Short,
                             withDismissAction = true,
                         )
@@ -137,7 +136,6 @@ fun DetailScreen(
     }
 }
 
-// TODO try making status bar transparent or adjust sheetPeekHeight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailBody(
@@ -161,10 +159,12 @@ fun DetailBody(
     )
 
     BottomSheetScaffold(
-        snackbarHost = { SnackbarHost(
-            hostState = snackbarHostState,
-            snackbar = {  DetailsSnackbar(it) }
-        )},
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                snackbar = { ActionSnackbar(it) }
+            )
+        },
         sheetShape = RoundedCornerShape(sheetCornerRadius, sheetCornerRadius, 0.dp, 0.dp),
         scaffoldState = scaffoldState,
         sheetDragHandle = {
@@ -191,7 +191,7 @@ fun DetailBody(
             model = ImageRequest.Builder(LocalContext.current).data(mealDetails.thumbUrl)
                 .crossfade(true).build(),
             contentDescription = null,
-            contentScale = ContentScale.FillWidth
+            contentScale = ContentScale.FillWidth,
         )
         // for preview
         //Image(contentScale = ContentScale.FillWidth, painter = painterResource(id = R.drawable.dummy_dish_1_original), contentDescription = null, modifier = Modifier.fillMaxWidth())
@@ -218,10 +218,10 @@ fun SheetContent(mealDetails: MealDetails, modifier: Modifier = Modifier) {
     ) {
         Text(text = mealDetails.name, style = MaterialTheme.typography.headlineMedium)
         Divider(color = Color(0xFFD0DBEA))
-        Text(text = "INSTRUCTIONS", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.instructions), style = MaterialTheme.typography.titleMedium)
         Text(text = mealDetails.instructions, style = MaterialTheme.typography.bodySmall)
         Divider(color = Color(0xFFD0DBEA))
-        Text(text = "INGREDIENTS", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.ingredients), style = MaterialTheme.typography.titleMedium)
 
         for (pair in mealDetails.getIngredients().zip(mealDetails.getMeasures())) {
             if (pair.first == null || pair.second == null || pair.first == "" || pair.second == "") {
@@ -248,40 +248,29 @@ private fun TopButtons(
     Row(
         modifier = modifier
     ) {
-        IconButton(
-            onClick = onBackClick,
-            colors = IconButtonDefaults.iconButtonColors(Color.White),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Go back",
-                tint = Color(0xFF061B54)
-            )
-        }
+        TopBarActionButton(
+            icon = Icons.Filled.ArrowBack, onClick = onBackClick, modifier = Modifier
+                .height(48.dp)
+                .width(48.dp)
+        )
         Spacer(Modifier.weight(1f))
 
-        IconButton(
+        TopBarActionButton(
+            icon = if (inFavourites) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             onClick = onAddFavourite,
-            colors = IconButtonDefaults.iconButtonColors(Color.White),
-            modifier = Modifier.padding(end = 8.dp)
-        ) {
-            Icon(
-                imageVector = if (inFavourites) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = "Add to favourites",
-                tint = Color(0xFF061B54)
-            )
-        }
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .height(48.dp)
+                .width(48.dp)
+        )
 
-        IconButton(
+        TopBarActionButton(
+            icon = if (inCart) Icons.Filled.ShoppingCart else Icons.Outlined.ShoppingCart,
             onClick = onAddToCart,
-            colors = IconButtonDefaults.iconButtonColors(Color.White)
-        ) {
-            Icon(
-                imageVector = if (inCart) Icons.Filled.ShoppingCart else Icons.Outlined.ShoppingCart,
-                contentDescription = "Add to shopping list",
-                tint = Color(0xFF061B54)
-            )
-        }
+            modifier = Modifier
+                .height(48.dp)
+                .width(48.dp)
+        )
     }
 }
 
@@ -305,67 +294,69 @@ private fun IngredientWithMeasure(ingredient: String, measure: String, modifier:
     }
 }
 
-//@Composable
-//@Preview(showBackground = true)
-//fun DetailScreenPreview() {
-//    val mealDetails = MealDetails(
-//        id = "52804",
-//        name = "Poutine",
-//        drinkAlternate = null,
-//        category = "Miscellaneous",
-//        area = "Canadian",
-//        instructions = "Heat oil in a deep fryer or deep heavy skillet to 365°F (185°C).\r\nWarm gravy in saucepan or microwave.\r\nPlace the fries into the hot oil, and cook until light brown, about 5 minutes.\r\nRemove to a paper towel lined plate to drain.\r\nPlace the fries on a serving platter, and sprinkle the cheese over them.\r\nLadle gravy over the fries and cheese, and serve immediately.",
-//        thumbUrl = "https://www.themealdb.com/images/media/meals/uuyrrx1487327597.jpg",
-//        tags = "UnHealthy,Speciality,HangoverFood",
-//        youtubeUrl = "https://www.youtube.com/watch?v=UVAMAoA2_WU",
-//        ingredient1 = "Vegetable Oil",
-//        ingredient2 = "Vegetable Oil",
-//        ingredient3 = "Vegetable Oil",
-//        ingredient4 = "Vegetable Oil",
-//        ingredient5 = "Vegetable Oil",
-//        ingredient6 = "Vegetable Oil",
-//        ingredient7 = "Vegetable Oil",
-//        ingredient8 = "Vegetable Oil",
-//        ingredient9 = "",
-//        ingredient10 = "",
-//        ingredient11 = "",
-//        ingredient12 = "",
-//        ingredient13 = "",
-//        ingredient14 = "",
-//        ingredient15 = "",
-//        ingredient16 = "",
-//        ingredient17 = "",
-//        ingredient18 = "",
-//        ingredient19 = "",
-//        ingredient20 = "",
-//        measure1 = "Dash",
-//        measure2 = "Dash",
-//        measure3 = "Dash",
-//        measure4 = "Dash",
-//        measure5 = "Dash",
-//        measure6 = "Dash",
-//        measure7 = "Dash",
-//        measure8 = "Dash",
-//        measure9 = "",
-//        measure10 = "",
-//        measure11 = "",
-//        measure12 = "",
-//        measure13 = "",
-//        measure14 = "",
-//        measure15 = "",
-//        measure16 = "",
-//        measure17 = "",
-//        measure18 = "",
-//        measure19 = "",
-//        measure20 = "",
-//    )
-//    RecipyTheme {
-//        DetailBody(
-//            mealDetails = mealDetails,
-//            inFavourites = false,
-//            inCart = false,
-//            onSwitchFavourite = {},
-//            onSwitchInCart = {},
-//            onBackClick = {})
-//    }
-//}
+@Composable
+@Preview(showBackground = true)
+fun DetailScreenPreview() {
+    val mealDetails = MealDetails(
+        id = "52804",
+        name = "Poutine",
+        drinkAlternate = null,
+        category = "Miscellaneous",
+        area = "Canadian",
+        instructions = "Heat oil in a deep fryer or deep heavy skillet to 365°F (185°C).\r\nWarm gravy in saucepan or microwave.\r\nPlace the fries into the hot oil, and cook until light brown, about 5 minutes.\r\nRemove to a paper towel lined plate to drain.\r\nPlace the fries on a serving platter, and sprinkle the cheese over them.\r\nLadle gravy over the fries and cheese, and serve immediately.",
+        thumbUrl = "https://www.themealdb.com/images/media/meals/uuyrrx1487327597.jpg",
+        tags = "UnHealthy,Speciality,HangoverFood",
+        youtubeUrl = "https://www.youtube.com/watch?v=UVAMAoA2_WU",
+        ingredient1 = "Vegetable Oil",
+        ingredient2 = "Vegetable Oil",
+        ingredient3 = "Vegetable Oil",
+        ingredient4 = "Vegetable Oil",
+        ingredient5 = "Vegetable Oil",
+        ingredient6 = "Vegetable Oil",
+        ingredient7 = "Vegetable Oil",
+        ingredient8 = "Vegetable Oil",
+        ingredient9 = "",
+        ingredient10 = "",
+        ingredient11 = "",
+        ingredient12 = "",
+        ingredient13 = "",
+        ingredient14 = "",
+        ingredient15 = "",
+        ingredient16 = "",
+        ingredient17 = "",
+        ingredient18 = "",
+        ingredient19 = "",
+        ingredient20 = "",
+        measure1 = "Dash",
+        measure2 = "Dash",
+        measure3 = "Dash",
+        measure4 = "Dash",
+        measure5 = "Dash",
+        measure6 = "Dash",
+        measure7 = "Dash",
+        measure8 = "Dash",
+        measure9 = "",
+        measure10 = "",
+        measure11 = "",
+        measure12 = "",
+        measure13 = "",
+        measure14 = "",
+        measure15 = "",
+        measure16 = "",
+        measure17 = "",
+        measure18 = "",
+        measure19 = "",
+        measure20 = "",
+    )
+    RecipyTheme (useDarkTheme = false){
+        DetailBody(
+            mealDetails = mealDetails,
+            inFavourites = false,
+            inCart = false,
+            onSwitchFavourite = {},
+            onSwitchInCart = {},
+            onBackClick = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
