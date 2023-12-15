@@ -11,6 +11,7 @@ import com.example.recipy.database.OfflineMealsRepository
 import com.example.recipy.model.MealDetails
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -46,8 +47,9 @@ class MealDetailsViewModel(
         viewModelScope.launch {
             detailUiState = DetailUiState.Loading
             detailUiState = try {
+                val offlineMealDetails = mealDetailStream.firstOrNull()
                 DetailUiState.Success(
-                    mealDetails = onlineMealsRepository.getMealWithId(mealId = mealId)!!,
+                    mealDetails = offlineMealDetails ?: onlineMealsRepository.getMealWithId(mealId = mealId)!!,
                     inFavourites = mealDetailStream
                         .map { it?.isFavourite == true }
                         .stateIn(

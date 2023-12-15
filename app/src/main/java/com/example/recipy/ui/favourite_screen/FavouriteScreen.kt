@@ -90,7 +90,6 @@ fun FavouriteScreen(
     }
 }
 
-
 @Composable
 private fun FavouriteBody(
     mealsInCategories: Map<String, List<MealDetails>>,
@@ -115,5 +114,4 @@ private fun FavouriteBody(
             )
         }
     }
-
 }
