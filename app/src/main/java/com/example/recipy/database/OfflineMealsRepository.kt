@@ -12,13 +12,16 @@ class OfflineMealsRepository(
 
     fun getItemStream(id: String): Flow<MealDetails?> = shoppingDao.getMealWithId(id)
 
-    fun getFavouritesStream(): Flow<List<Meal>> = shoppingDao.getFavouriteMeals().map {list -> list.map { it.toMeal() }}
+    fun getFavouritesStream(): Flow<List<Meal>> =
+        shoppingDao.getFavouriteMeals().map { list -> list.map { it.toMeal() } }
 
-    fun getFavouriteItemStream(id: String): Flow<Meal?> = shoppingDao.getFavouriteMealWithId(id).map { it?.toMeal() }
+    fun getFavouriteItemStream(id: String): Flow<Meal?> =
+        shoppingDao.getFavouriteMealWithId(id).map { it?.toMeal() }
 
-    fun getFavouriteStreamAsMealDetails() : Flow<List<MealDetails>> = shoppingDao.getFavouriteMeals()
+    fun getFavouriteStreamAsMealDetails(): Flow<List<MealDetails>> = shoppingDao.getFavouriteMeals()
 
-    fun getFavouriteItemStreamAsMealDetails(id: String): Flow<MealDetails?> = shoppingDao.getFavouriteMealWithId(id)
+    fun getFavouriteItemStreamAsMealDetails(id: String): Flow<MealDetails?> =
+        shoppingDao.getFavouriteMealWithId(id)
 
     fun getCartStream(): Flow<List<MealDetails>> = shoppingDao.getShoppingMeals()
 
@@ -38,8 +41,13 @@ class OfflineMealsRepository(
     suspend fun removeFromFavourites(id: String) {
         val mealDetails = shoppingDao.getMealWithId(id).first()
         if (mealDetails != null) {
-            mealDetails.isFavourite = false
-            shoppingDao.upsertShoppingMeal(mealDetails)
+            if (mealDetails.isInCart == true) {
+                mealDetails.isFavourite = false
+                shoppingDao.upsertShoppingMeal(mealDetails)
+            } else {
+                shoppingDao.deleteShoppingMeal(mealDetails)
+            }
+
         }
     }
 
@@ -64,8 +72,33 @@ class OfflineMealsRepository(
     suspend fun removeFromCart(mealId: String) {
         val mealDetails = shoppingDao.getMealWithId(mealId).first()
         if (mealDetails != null) {
-            mealDetails.isInCart = false
-            shoppingDao.upsertShoppingMeal(mealDetails)
+            if (mealDetails.isFavourite == true) {
+                mealDetails.isInCart = false
+                mealDetails.marked1 = false
+                mealDetails.marked2 = false
+                mealDetails.marked3 = false
+                mealDetails.marked4 = false
+                mealDetails.marked5 = false
+                mealDetails.marked6 = false
+                mealDetails.marked7 = false
+                mealDetails.marked8 = false
+                mealDetails.marked9 = false
+                mealDetails.marked10 = false
+                mealDetails.marked11 = false
+                mealDetails.marked12 = false
+                mealDetails.marked13 = false
+                mealDetails.marked14 = false
+                mealDetails.marked15 = false
+                mealDetails.marked16 = false
+                mealDetails.marked17 = false
+                mealDetails.marked18 = false
+                mealDetails.marked19 = false
+                mealDetails.marked20 = false
+                shoppingDao.upsertShoppingMeal(mealDetails)
+            } else {
+                shoppingDao.deleteShoppingMeal(mealDetails)
+            }
+
         }
     }
 
