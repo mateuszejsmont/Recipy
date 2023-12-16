@@ -274,86 +274,87 @@ data class MealDetails(
     }
 
     fun mark(name: String, mark: Boolean): Boolean {
+        var a = false
         if (ingredient1 == name) {
             marked1 = mark
-            return true
+            a = true
         }
         if (ingredient2 == name) {
             marked2 = mark
-            return true
+            a = true
         }
         if (ingredient3 == name) {
             marked3 = mark
-            return true
+            a = true
         }
         if (ingredient4 == name) {
             marked4 = mark
-            return true
+            a = true
         }
         if (ingredient5 == name) {
             marked5 = mark
-            return true
+            a = true
         }
         if (ingredient6 == name) {
             marked6 = mark
-            return true
+            a = true
         }
         if (ingredient7 == name) {
             marked7 = mark
-            return true
+            a = true
         }
         if (ingredient8 == name) {
             marked8 = mark
-            return true
+            a = true
         }
         if (ingredient9 == name) {
             marked9 = mark
-            return true
+            a = true
         }
         if (ingredient10 == name) {
             marked10 = mark
-            return true
+            a = true
         }
         if (ingredient11 == name) {
             marked11 = mark
-            return true
+            a = true
         }
         if (ingredient12 == name) {
             marked12 = mark
-            return true
+            a = true
         }
         if (ingredient13 == name) {
             marked13 = mark
-            return true
+            a = true
         }
         if (ingredient14 == name) {
             marked14 = mark
-            return true
+            a = true
         }
         if (ingredient15 == name) {
             marked15 = mark
-            return true
+            a = true
         }
         if (ingredient16 == name) {
             marked16 = mark
-            return true
+            a = true
         }
         if (ingredient17 == name) {
             marked17 = mark
-            return true
+            a = true
         }
         if (ingredient18 == name) {
             marked18 = mark
-            return true
+            a = true
         }
         if (ingredient19 == name) {
             marked19 = mark
-            return true
+            a = true
         }
         if (ingredient20 == name) {
             marked20 = mark
-            return true
+            a = true
         }
-        return false
+        return a
     }
 }
