@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,7 +49,7 @@ fun FavouriteScreen(
     val context = LocalContext.current
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.testTag("favourites_screen_scaffold"),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState,

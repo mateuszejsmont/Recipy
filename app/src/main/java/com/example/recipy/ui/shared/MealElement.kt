@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,11 +44,11 @@ fun MealElement(
     Card(
         modifier = modifier
             .width(244.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .testTag("meal_tile"),
         border = BorderStroke(1.dp, colorResource(id = R.color.light_gray)),
     ) {
         Column {
-            // TODO: image displaying
             if (meal.thumbUrl == "") {
                 Image(
                     painter = painterResource(id = R.drawable.dummy_dish_1),
@@ -78,28 +79,17 @@ fun MealElement(
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 10.dp)
+                        .testTag("meal_tile_name"),
                     text = meal.name,
                     style = MaterialTheme.typography.titleMedium,
                 )
-                IconButton(onClick = onActionButtonClick) {
+                IconButton(onClick = onActionButtonClick, modifier = Modifier.testTag("meal_tile_add_to_fav_btn")) {
                     Icon(
                         imageVector = actionButtonIcon,
                         contentDescription = null,
                     )
                 }
-
-//                Icon(
-//                    imageVector = Icons.Default.FavoriteBorder,
-//                    contentDescription = null,
-//                    modifier = Modifier.clickable { },
-//                )
-//                Spacer(modifier = Modifier.width(6.dp))
-//                Icon(
-//                    imageVector = Icons.Default.ShoppingCart,
-//                    contentDescription = null,
-//                    modifier = Modifier.clickable { },
-//                )
             }
         }
     }

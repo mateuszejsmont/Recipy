@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -216,7 +217,7 @@ fun SheetContent(mealDetails: MealDetails, modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = mealDetails.name, style = MaterialTheme.typography.headlineMedium)
+        Text(text = mealDetails.name, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.testTag("details_meal_name"))
         Divider(color = Color(0xFFD0DBEA))
         Text(text = stringResource(R.string.instructions), style = MaterialTheme.typography.titleMedium)
         Text(text = mealDetails.instructions, style = MaterialTheme.typography.bodySmall)
@@ -252,6 +253,7 @@ private fun TopButtons(
             icon = Icons.Filled.ArrowBack, onClick = onBackClick, modifier = Modifier
                 .height(48.dp)
                 .width(48.dp)
+                .testTag("details_back_btn")
         )
         Spacer(Modifier.weight(1f))
 
@@ -270,6 +272,7 @@ private fun TopButtons(
             modifier = Modifier
                 .height(48.dp)
                 .width(48.dp)
+                .testTag("details_add_to_cart_btn")
         )
     }
 }

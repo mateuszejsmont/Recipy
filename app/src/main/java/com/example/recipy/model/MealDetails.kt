@@ -35,7 +35,7 @@ data class MealDetails(
     val instructions: String,
     @ColumnInfo(name = "url")
     @SerialName("strMealThumb")
-    var thumbUrl: String,
+    var thumbUrl: String?,
     @ColumnInfo(name = "tags")
     @SerialName("strTags")
     val tags: String?,
