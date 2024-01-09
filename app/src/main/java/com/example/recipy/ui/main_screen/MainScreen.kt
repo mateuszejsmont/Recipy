@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -230,7 +231,8 @@ fun MainScreenTopBar(
                 Icons.Default.FavoriteBorder,
                 modifier = Modifier
                     .height(48.dp)
-                    .width(48.dp),
+                    .width(48.dp)
+                    .testTag("favourites_btn"),
                 onClick = onFavouriteClick
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -238,7 +240,8 @@ fun MainScreenTopBar(
                 Icons.Default.ShoppingCart,
                 modifier = Modifier
                     .height(48.dp)
-                    .width(48.dp),
+                    .width(48.dp)
+                    .testTag("shopping_btn"),
                 onClick = onShoppingClick
             )
         }
@@ -256,7 +259,7 @@ fun SearchBar(
 ) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.testTag("search_bar"),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
             unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,

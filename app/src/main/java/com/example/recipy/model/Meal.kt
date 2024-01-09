@@ -16,7 +16,7 @@ data class Meal (
     @SerialName("strMeal")
     val name: String,
     @SerialName("strMealThumb")
-    var thumbUrl: String
+    var thumbUrl: String?
 ) {
     fun matchesQuery(query: String) : Boolean {
         return name.lowercase().contains(query)
