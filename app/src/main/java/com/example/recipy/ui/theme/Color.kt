@@ -1,7 +1,7 @@
 package com.example.recipy.ui.theme
 import androidx.compose.ui.graphics.Color
 
-val md_theme_light_primary = Color(0xFF4259A9)
+val md_theme_light_primary = Color(0xFF001550)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFF4F5F7)
 val md_theme_light_onPrimaryContainer = Color(0xFF001550)
@@ -23,7 +23,7 @@ val md_theme_light_surface = Color(0xFFFEFBFF)
 val md_theme_light_onSurface = Color(0xFF061B54)
 val md_theme_light_surfaceVariant = Color(0xFFFFFFFF)
 val md_theme_light_onSurfaceVariant = Color(0xFF061B54)
-val md_theme_light_outline = Color(0xFF767680)
+val md_theme_light_outline = Color(0xFFE2E2E2)
 val md_theme_light_inverseOnSurface = Color(0xFFF2F0F4)
 val md_theme_light_inverseSurface = Color(0xFF303034)
 val md_theme_light_inversePrimary = Color(0xFFB6C4FF)
