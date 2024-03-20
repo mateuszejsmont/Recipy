@@ -3,6 +3,7 @@
     <string name="explore">Explore</string>
     <string name="favourites">Favourites</string>
     <string name="shopping">Shopping</string>
+    <string name="notes">Notes</string>
     <string name="meals">MEALS</string>
     <string name="empty_favourites_msg">You have no favourite meals. What are you waiting for?</string>
     <string name="empty_shopping_msg">There are no meals on your shopping list.</string>
