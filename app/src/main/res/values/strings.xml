@@ -3,6 +3,8 @@
     <string name="explore">Explore</string>
     <string name="favourites">Favourites</string>
     <string name="shopping">Shopping</string>
+    <string name="notes">Notes</string>
+    <string name="create_recipe">Create recipe</string>
     <string name="meals">MEALS</string>
     <string name="empty_favourites_msg">You have no favourite meals. What are you waiting for?</string>
     <string name="empty_shopping_msg">There are no meals on your shopping list.</string>
@@ -16,7 +18,10 @@
     <string name="instructions">INSTRUCTIONS</string>
     <string name="ingredients">INGREDIENTS</string>
     <string name="video">VIDEO</string>
+    <string name="name">NAME</string>
+    <string name="photo">PHOTO</string>
     <string name="to_buy">TO BUY</string>
     <string name="search">Search</string>
     <string name="add">Add</string>
+    <string name="create">Create</string>
 </resources>
