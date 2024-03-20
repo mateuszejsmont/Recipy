@@ -9,20 +9,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -121,6 +126,18 @@ fun MainScreen(
                 onShoppingClick = onShoppingClick,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {},
+                shape = CircleShape
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    stringResource(R.string.add),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
     ) { innerPadding ->
         when (val uiState = viewModel.mainUiState) {
@@ -181,6 +198,7 @@ private fun MainBody(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier.pointerInput(Unit) {detectTapGestures ( onTap =  {focusManager.clearFocus()})}
     ) {
