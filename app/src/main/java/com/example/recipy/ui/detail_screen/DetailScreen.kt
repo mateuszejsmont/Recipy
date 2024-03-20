@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -23,6 +25,8 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -34,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -59,6 +64,15 @@ import com.example.recipy.ui.shared.LoadingBody
 import com.example.recipy.ui.shared.TopBarActionButton
 import com.example.recipy.ui.theme.RecipyTheme
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Note
+import androidx.compose.material.icons.automirrored.outlined.Note
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Note
+
 
 object MealDetailsDestination : NavigationDestination {
     override val route = "meal_detail"
@@ -185,7 +199,7 @@ fun DetailBody(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         AsyncImage(
             modifier = Modifier.fillMaxWidth(),
@@ -250,13 +264,21 @@ private fun TopButtons(
         modifier = modifier
     ) {
         TopBarActionButton(
-            icon = Icons.Filled.ArrowBack, onClick = onBackClick, modifier = Modifier
+            icon = Icons.AutoMirrored.Filled.ArrowBack, onClick = onBackClick, modifier = Modifier
                 .height(48.dp)
                 .width(48.dp)
                 .testTag("details_back_btn")
         )
         Spacer(Modifier.weight(1f))
 
+        TopBarActionButton(
+            icon = Icons.AutoMirrored.Outlined.Note,
+            onClick = {},
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .height(48.dp)
+                .width(48.dp),
+        )
         TopBarActionButton(
             icon = if (inFavourites) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             onClick = onAddFavourite,
@@ -265,7 +287,6 @@ private fun TopButtons(
                 .height(48.dp)
                 .width(48.dp)
         )
-
         TopBarActionButton(
             icon = if (inCart) Icons.Filled.ShoppingCart else Icons.Outlined.ShoppingCart,
             onClick = onAddToCart,
